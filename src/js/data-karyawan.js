@@ -2,7 +2,6 @@ import { APP_CONFIG } from '../config/api.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // 1. PROTEKSI SESI & INISIALISASI
     const sessionToken = sessionStorage.getItem('nexus_auth_token');
     const savedUserId = localStorage.getItem('nexus_user');
     if (!sessionToken) { window.location.replace('/'); return; }
@@ -18,11 +17,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let filteredDataCache = []; 
     let masterOptions = {};
 
-    // 2. DETEKSI FILTER URL
     const urlParams = new URLSearchParams(window.location.search);
     const deptFilter = urlParams.get('dept'); 
 
-    // 3. LOAD DATA (PARALEL UNTUK KECEPATAN)
+    // ==========================================
+    // FUNGSI SAKTI: KONVERTER URL DRIVE KE THUMBNAIL
+    // ==========================================
+    function getAvatarLink(gdriveUrl) {
+        if (!gdriveUrl || gdriveUrl === "-" || gdriveUrl.includes("Upload_Error")) return null;
+        const match = gdriveUrl.match(/\/d\/([a-zA-Z0-9-_]+)/); 
+        // Menggunakan sz=w400 agar foto profil dimuat dengan sangat cepat dan ringan
+        if (match && match[1]) return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w400`;
+        return null;
+    }
+
     async function initSystem() {
         tableContainer.innerHTML = `<div class="p-8 h-full flex flex-col items-center justify-center text-cyan-400 font-mono animate-pulse"><div class="w-12 h-12 border-t-2 border-cyan-400 rounded-full animate-spin mb-4"></div>Menyelaraskan Database Pusat...</div>`;
         try {
@@ -54,11 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function fillSelect(elementId, dataArray) {
         const select = document.getElementById(elementId);
         if(!select) return;
-        select.innerHTML = '<option value="">-- Pilih Otorisasi --</option>';
+        select.innerHTML = '<option value="">-- Pilihan Opsional --</option>';
         dataArray.forEach(item => { select.innerHTML += `<option value="${item}">${item}</option>`; });
     }
 
-    // 4. LOGIKA PENYARINGAN DATA (FILTERING)
     function applyFilters() {
         let dataToRender = [...allDataCache];
 
@@ -92,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     searchInput.addEventListener('input', applyFilters);
 
-    // 5. RENDER TABEL (Dilengkapi Kolom Aksi Edit & Delete)
     function renderTable(data) {
         if (data.length === 0) {
             tableContainer.innerHTML = `<p class="text-cyan-500/50 font-mono tracking-widest text-xs uppercase flex justify-center mt-20">Tidak ada personil yang sesuai dengan parameter pencarian.</p>`;
@@ -111,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <th class="p-4 font-bold">Departemen</th>
                             <th class="p-4 font-bold">Area / Zone</th>
                             <th class="p-4 font-bold text-center">Status</th>
-                            <th class="p-4 font-bold text-right">Aksi</th>
+                            <th class="p-4 font-bold text-right">Otorisasi Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="text-xs font-mono text-slate-300 divide-y divide-cyan-500/10">
@@ -124,10 +130,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const area = row[6] ? String(row[6]) : '-';
             const zone = row[8] ? String(row[8]) : '-';
             
-            let kodeBase64 = row[11] ? String(row[11]) : ""; 
-            let fotoSrc = (!kodeBase64 || kodeBase64 === "-" || kodeBase64 === "") 
-                ? `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23083344'/><text x='50' y='50' font-family='sans-serif' font-size='45' font-weight='bold' fill='%2322d3ee' text-anchor='middle' dominant-baseline='central'>${nama !== '-' ? nama.charAt(0).toUpperCase() : '?'}</text></svg>` 
-                : `data:image/jpeg;base64,${kodeBase64}`;
+            // PERUBAHAN: Membaca URL Drive di Index 9, bukan Base64 di Index 11
+            let urlDrive = row[9] ? String(row[9]) : ""; 
+            let directFotoLink = getAvatarLink(urlDrive);
+            
+            let fotoSrc = directFotoLink 
+                ? directFotoLink 
+                : `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23083344'/><text x='50' y='50' font-family='sans-serif' font-size='45' font-weight='bold' fill='%2322d3ee' text-anchor='middle' dominant-baseline='central'>${nama !== '-' ? nama.charAt(0).toUpperCase() : '?'}</text></svg>`;
 
             tableHTML += `
                 <tr class="hover:bg-cyan-500/10 transition-colors group cursor-default">
@@ -160,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 6. LOGIKA MODAL FORM (CREATE & EDIT)
+    // 6. LOGIKA MODAL FORM
     // ==========================================
     const formModal = document.getElementById('formModal');
     const modalContent = document.getElementById('modalContent');
@@ -169,36 +178,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const openModal = (mode = 'CREATE', data = null) => {
         document.getElementById('formMode').value = mode;
+        document.getElementById('formOldId').value = (mode === 'UPDATE' && data) ? data[1] : '';
+
         document.getElementById('modalTitle').innerHTML = mode === 'CREATE' ? `<span class="w-2 h-2 bg-cyan-400 rounded-full mr-3 shadow-[0_0_8px_#22d3ee]"></span> Registrasi Personil Baru` : `<span class="w-2 h-2 bg-amber-400 rounded-full mr-3 shadow-[0_0_8px_#f59e0b]"></span> Pembaruan Data Personil`;
         
         const previewFoto = document.getElementById('previewFoto');
         const previewInitials = document.getElementById('previewInitials');
 
-        if (mode === 'UPDATE' && data) {
-            document.getElementById('formDataId').value = data[1];
-            document.getElementById('formDataId').readOnly = true; 
-            document.getElementById('formDataId').classList.add('opacity-50', 'cursor-not-allowed', 'bg-slate-800');
-            document.getElementById('formDataNama').value = data[2];
-            document.getElementById('formDataGender').value = data[3];
-            document.getElementById('formDataPlant').value = data[4];
-            document.getElementById('formDataDept').value = data[5];
-            document.getElementById('formDataArea').value = data[6];
-            document.getElementById('formDataGroup').value = data[7];
-            document.getElementById('formDataZone').value = data[8];
+        document.getElementById('formDataId').readOnly = false;
+        document.getElementById('formDataId').classList.remove('opacity-50', 'cursor-not-allowed', 'bg-slate-800');
 
-            let kodeBase64 = data[11] ? String(data[11]) : "";
-            if (!kodeBase64 || kodeBase64 === "-" || kodeBase64 === "") {
-                previewFoto.classList.add('hidden');
-                previewInitials.classList.remove('hidden');
-                previewInitials.innerText = data[2] ? data[2].charAt(0).toUpperCase() : '?';
-            } else {
-                previewFoto.src = `data:image/jpeg;base64,${kodeBase64}`;
+        if (mode === 'UPDATE' && data) {
+            document.getElementById('formDataId').value = data[1] && data[1] !== '-' ? data[1] : '';
+            document.getElementById('formDataNama').value = data[2] && data[2] !== '-' ? data[2] : '';
+            document.getElementById('formDataGender').value = data[3] && data[3] !== '-' ? data[3] : '';
+            document.getElementById('formDataPlant').value = data[4] && data[4] !== '-' ? data[4] : '';
+            document.getElementById('formDataDept').value = data[5] && data[5] !== '-' ? data[5] : '';
+            document.getElementById('formDataArea').value = data[6] && data[6] !== '-' ? data[6] : '';
+            document.getElementById('formDataGroup').value = data[7] && data[7] !== '-' ? data[7] : '';
+            document.getElementById('formDataZone').value = data[8] && data[8] !== '-' ? data[8] : '';
+
+            // PERUBAHAN: Membaca URL Drive di Index 9 untuk dimuat ke dalam Modal Edit
+            let urlDrive = data[9] ? String(data[9]) : "";
+            let directFotoLink = getAvatarLink(urlDrive);
+
+            if (directFotoLink) {
+                previewFoto.src = directFotoLink;
                 previewFoto.classList.remove('hidden');
                 previewInitials.classList.add('hidden');
+            } else {
+                previewFoto.classList.add('hidden');
+                previewInitials.classList.remove('hidden');
+                previewInitials.innerText = data[2] && data[2] !== '-' ? data[2].charAt(0).toUpperCase() : '?';
             }
         } else {
-            document.getElementById('formDataId').readOnly = false;
-            document.getElementById('formDataId').classList.remove('opacity-50', 'cursor-not-allowed', 'bg-slate-800');
             previewFoto.classList.add('hidden');
             previewInitials.classList.remove('hidden');
             previewInitials.innerText = '?';
@@ -224,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('modalOverlay')?.addEventListener('click', closeModal);
 
     // ==========================================
-    // 7. KOMPRESI GAMBAR (ENGINE CANVAS)
+    // 7. KOMPRESI GAMBAR KLIEN
     // ==========================================
     const fotoInput = document.getElementById('formFoto');
     const fileNameDisplay = document.getElementById('fileNameDisplay');
@@ -279,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 8. SUBMIT FORM (CREATE / UPDATE API)
+    // 8. SUBMIT FORM
     // ==========================================
     if(karyawanForm) {
         karyawanForm.addEventListener('submit', async (e) => {
@@ -292,14 +305,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const mode = document.getElementById('formMode').value;
             const payloadData = {
                 userId: savedUserId, 
-                idKaryawan: document.getElementById('formDataId').value.trim(),
-                nama: document.getElementById('formDataNama').value.trim(),
-                gender: document.getElementById('formDataGender').value,
-                plant: document.getElementById('formDataPlant').value,
-                dept: document.getElementById('formDataDept').value,
-                area: document.getElementById('formDataArea').value,
-                group: document.getElementById('formDataGroup').value,
-                zone: document.getElementById('formDataZone').value,
+                oldIdKaryawan: document.getElementById('formOldId').value.trim(),
+                idKaryawan: document.getElementById('formDataId').value.trim() || "-",
+                nama: document.getElementById('formDataNama').value.trim() || "-",
+                gender: document.getElementById('formDataGender').value || "-",
+                plant: document.getElementById('formDataPlant').value || "-",
+                dept: document.getElementById('formDataDept').value || "-",
+                area: document.getElementById('formDataArea').value || "-",
+                group: document.getElementById('formDataGroup').value || "-",
+                zone: document.getElementById('formDataZone').value || "-",
                 fotoBase64: base64FotoData, 
                 fotoName: namaFileFoto      
             };
@@ -312,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (result.status === 'success') {
                     window.showToast(`Registrasi personil berhasil divalidasi.`, 'success');
                     closeModal(); 
-                    initSystem(); // Muat ulang data
+                    initSystem(); 
                 } else throw new Error(result.message);
             } catch (error) {
                 window.showToast(`Kegagalan Sistem: ${error.message}`, 'error');
@@ -366,7 +380,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('cancelDeleteBtn')?.addEventListener('click', closeDeleteModal);
     document.getElementById('deleteOverlay')?.addEventListener('click', closeDeleteModal);
 
-    // EKSEKUSI API HAPUS
     document.getElementById('confirmDeleteBtn')?.addEventListener('click', async () => {
         if(!pendingDeleteId) return;
         
@@ -383,7 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if(resJson.status === 'success') {
                 closeDeleteModal();
                 window.showToast(`Personil ID ${pendingDeleteId} berhasil dipindahkan ke sistem Recovery.`, 'success');
-                initSystem(); // Refresh tabel otomatis
+                initSystem(); 
             } else throw new Error(resJson.message);
         } catch (err) { 
             window.showToast("Gagal Mencabut Akses: " + err.message, 'error'); 
@@ -392,6 +405,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // MULAI SISTEM
     initSystem();
 });

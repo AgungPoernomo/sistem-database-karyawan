@@ -45,7 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 5. UPDATE WIDGET & NAVIGASI
     function updateWidgets(data) {
-        const counts = { aktif: data.length, produksi: 0, mechanical: 0, utility: 0, qa: 0, qc: 0, cleaning: 0, other: 0 };
+        // Membersihkan variabel dan perhitungan 'cleaning'
+        const counts = { aktif: data.length, produksi: 0, mechanical: 0, utility: 0, qa: 0, qc: 0, other: 0 };
         
         data.forEach(row => {
             const dept = String(row[5] || '').toLowerCase();
@@ -54,8 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
             else if(dept.includes('utility')) counts.utility++;
             else if(dept.includes('qa')) counts.qa++;
             else if(dept.includes('qc')) counts.qc++;
-            else if(dept.includes('cleaning')) counts.cleaning++;
-            else counts.other++;
+            else counts.other++; // Data yang sebelumnya masuk cleaning sekarang otomatis akan ditampung di "Other"
         });
 
         document.getElementById('count-aktif').innerText = counts.aktif.toLocaleString();
@@ -64,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('count-utility').innerText = counts.utility.toLocaleString();
         document.getElementById('count-qa').innerText = counts.qa.toLocaleString();
         document.getElementById('count-qc').innerText = counts.qc.toLocaleString();
-        document.getElementById('count-cleaning').innerText = counts.cleaning.toLocaleString();
         document.getElementById('count-other').innerText = counts.other.toLocaleString();
     }
 
@@ -80,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupWidgetLink('widget-utility', 'Utility');
     setupWidgetLink('widget-qa', 'QA');
     setupWidgetLink('widget-qc', 'QC');
-    setupWidgetLink('widget-cleaning', 'Cleaning');
     setupWidgetLink('widget-other', 'Other');
 
     // 6. RENDER TABEL (Mode Read-Only dengan Last Update)

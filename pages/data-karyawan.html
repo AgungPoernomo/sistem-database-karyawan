@@ -42,7 +42,7 @@
             </button>
             <div>
                 <h2 class="text-2xl font-bold text-white tracking-tight uppercase flex items-center">
-                    Database Personil Organisasi
+                    Database Personil
                     <span id="filterBadge" class="ml-4 text-[10px] bg-cyan-500/20 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/30 tracking-widest hidden animate-pulse">FILTER AKTIF</span>
                 </h2>
                 <p id="filterDescription" class="text-xs font-mono text-cyan-500/70 mt-1 uppercase tracking-widest">Pusat Manajemen & Integrasi Data Operasional</p>
@@ -55,7 +55,7 @@
                 <svg class="w-4 h-4 text-slate-500 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             </div>
             <button id="openAddModalBtn" class="bg-cyan-600 hover:bg-cyan-500 text-slate-950 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all flex items-center hover:-translate-y-0.5 active:translate-y-0">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> Registrasi Personil
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> Registrasi
             </button>
         </div>
     </header>
@@ -65,7 +65,7 @@
             <div class="px-6 py-4 border-b border-cyan-500/30 flex justify-between items-center bg-slate-900/80 shadow-md">
                 <h3 class="text-xs font-bold text-white uppercase tracking-widest flex items-center">
                     <span class="w-2 h-2 bg-cyan-400 rounded-full mr-3 shadow-[0_0_8px_#22d3ee]"></span>
-                    Tabel Organisasi: <span id="tableTitle" class="ml-2 text-cyan-400">Seluruh Departemen</span>
+                    Tabel Data: <span id="tableTitle" class="ml-2 text-cyan-400">Seluruh Departemen</span>
                 </h3>
                 <p class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Total Personil Terdaftar: <span id="rowCount" class="text-cyan-400 font-bold text-xs ml-1">0</span></p>
             </div>
@@ -91,46 +91,47 @@
 
             <form id="karyawanForm" class="space-y-4">
                 <input type="hidden" id="formMode" value="CREATE"> 
+                <input type="hidden" id="formOldId" value=""> 
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div class="space-y-1.5">
                         <label class="text-[10px] font-bold text-cyan-300/80 uppercase tracking-widest">ID Personil (Angka Saja)</label>
-                        <input type="text" id="formDataId" pattern="[0-9]+" title="Hanya angka" required class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 transition-colors shadow-inner">
+                        <input type="text" id="formDataId" pattern="[0-9]*" title="Hanya angka" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 transition-colors shadow-inner">
                     </div>
                     <div class="space-y-1.5">
                         <label class="text-[10px] font-bold text-cyan-300/80 uppercase tracking-widest">Nama Lengkap</label>
-                        <input type="text" id="formDataNama" pattern="[A-Za-z\s]+" title="Hanya huruf" required class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 transition-colors shadow-inner">
+                        <input type="text" id="formDataNama" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 transition-colors shadow-inner">
                     </div>
                     
                     <div class="space-y-1.5">
                         <label class="text-[10px] font-bold text-cyan-300/80 uppercase tracking-widest">Gender</label>
-                        <select id="formDataGender" required class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 appearance-none shadow-inner"><option value="">Memuat...</option></select>
+                        <select id="formDataGender" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 appearance-none shadow-inner"><option value="">-- Pilihan Opsional --</option></select>
                     </div>
                     <div class="space-y-1.5">
                         <label class="text-[10px] font-bold text-cyan-300/80 uppercase tracking-widest">Plant / Line</label>
-                        <select id="formDataPlant" required class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 appearance-none shadow-inner"><option value="">Memuat...</option></select>
+                        <select id="formDataPlant" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 appearance-none shadow-inner"><option value="">-- Pilihan Opsional --</option></select>
                     </div>
                     <div class="space-y-1.5">
                         <label class="text-[10px] font-bold text-cyan-300/80 uppercase tracking-widest">Departemen</label>
-                        <select id="formDataDept" required class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 appearance-none shadow-inner"><option value="">Memuat...</option></select>
+                        <select id="formDataDept" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 appearance-none shadow-inner"><option value="">-- Pilihan Opsional --</option></select>
                     </div>
                     <div class="space-y-1.5">
                         <label class="text-[10px] font-bold text-cyan-300/80 uppercase tracking-widest">Alokasi Area</label>
-                        <select id="formDataArea" required class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 appearance-none shadow-inner"><option value="">Memuat...</option></select>
+                        <select id="formDataArea" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 appearance-none shadow-inner"><option value="">-- Pilihan Opsional --</option></select>
                     </div>
                     <div class="space-y-1.5">
                         <label class="text-[10px] font-bold text-cyan-300/80 uppercase tracking-widest">Grup Kerja</label>
-                        <select id="formDataGroup" required class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 appearance-none shadow-inner"><option value="">Memuat...</option></select>
+                        <select id="formDataGroup" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 appearance-none shadow-inner"><option value="">-- Pilihan Opsional --</option></select>
                     </div>
                     <div class="space-y-1.5">
                         <label class="text-[10px] font-bold text-cyan-300/80 uppercase tracking-widest">Spesifik Zone</label>
-                        <select id="formDataZone" required class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 appearance-none shadow-inner"><option value="">Memuat...</option></select>
+                        <select id="formDataZone" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 appearance-none shadow-inner"><option value="">-- Pilihan Opsional --</option></select>
                     </div>
                 </div>
 
                 <div class="space-y-1.5 mt-4 border-t border-slate-800 pt-4">
                     <label class="text-[10px] font-bold text-cyan-300/80 uppercase tracking-widest">Identitas Visual Personil (Maks. 2 MB)</label>
                     <div class="flex items-center space-x-5">
-                        
                         <div class="w-24 h-24 rounded-2xl overflow-hidden border border-slate-600 bg-slate-900 flex-shrink-0 relative group shadow-md">
                             <img id="previewFoto" src="" alt="Preview" class="w-full h-full object-cover hidden">
                             <div id="previewInitials" class="w-full h-full flex items-center justify-center text-3xl font-bold text-cyan-500 bg-slate-900 shadow-[inset_0_0_15px_rgba(6,182,212,0.1)]">?</div>
