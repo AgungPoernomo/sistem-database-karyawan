@@ -25,9 +25,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const tableContainer = document.getElementById('tableContainer');
     let employeeDataCache = []; 
 
+    // ==========================================
+    // FUNGSI SAKTI: KONVERTER URL DRIVE KE THUMBNAIL
+    // ==========================================
+    function getAvatarLink(gdriveUrl) {
+        if (!gdriveUrl || gdriveUrl === "-" || gdriveUrl.includes("Upload_Error")) return null;
+        const match = gdriveUrl.match(/\/d\/([a-zA-Z0-9-_]+)/); 
+        if (match && match[1]) return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w400`;
+        return null;
+    }
+
     // 4. LOAD DATA (Hanya untuk Analytic Dashboard)
     async function loadEmployeeData() {
-        tableContainer.innerHTML = `<div class="p-8 h-full flex items-center justify-center text-cyan-400 font-mono animate-pulse">Menyelaraskan Database Pusat...</div>`;
+        tableContainer.innerHTML = `<div class="p-8 h-full flex items-center justify-center text-cyan-400 font-mono animate-pulse"><div class="w-8 h-8 border-t-2 border-cyan-400 rounded-full animate-spin mr-3"></div>Menyelaraskan Database Pusat...</div>`;
         try {
             const response = await fetch(APP_CONFIG.GAS_URL, {
                 method: 'POST', body: JSON.stringify({ action: 'READ' }) 
@@ -45,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 5. UPDATE WIDGET & NAVIGASI
     function updateWidgets(data) {
-        // Membersihkan variabel dan perhitungan 'cleaning'
         const counts = { aktif: data.length, produksi: 0, mechanical: 0, utility: 0, qa: 0, qc: 0, other: 0 };
         
         data.forEach(row => {
@@ -55,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
             else if(dept.includes('utility')) counts.utility++;
             else if(dept.includes('qa')) counts.qa++;
             else if(dept.includes('qc')) counts.qc++;
-            else counts.other++; // Data yang sebelumnya masuk cleaning sekarang otomatis akan ditampung di "Other"
+            else counts.other++; 
         });
 
         document.getElementById('count-aktif').innerText = counts.aktif.toLocaleString();
@@ -67,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('count-other').innerText = counts.other.toLocaleString();
     }
 
-    // Shortcut widget ke halaman Data Karyawan
     const setupWidgetLink = (widgetId, deptName) => {
         document.getElementById(widgetId)?.addEventListener('click', () => {
             window.location.href = `/pages/data-karyawan.html?dept=${encodeURIComponent(deptName)}`;
@@ -81,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupWidgetLink('widget-qc', 'QC');
     setupWidgetLink('widget-other', 'Other');
 
-    // 6. RENDER TABEL (Mode Read-Only dengan Last Update)
+    // 6. RENDER TABEL
     function renderTable(data) {
         if (data.length === 0) {
             tableContainer.innerHTML = `<p class="text-cyan-500/50 font-mono tracking-widest text-sm uppercase flex justify-center h-full items-center">Database Organisasi Kosong.</p>`;
@@ -108,7 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         data.forEach((row, index) => {
             const no = row[0] || (index + 1);
-            const idKaryawan = row[1] ? String(row[1]) : '-';
+            // Bersihkan tanda kutip (') dari ID jika ada
+            const idKaryawan = row[1] ? String(row[1]).replace(/'/g, "") : '-';
             const nama = row[2] ? String(row[2]) : '-';
             const dept = row[5] ? String(row[5]) : '-';
             const area = row[6] ? String(row[6]) : '-';
@@ -123,15 +132,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                 d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
             }
             
-            let kodeBase64 = row[11] ? String(row[11]) : ""; 
-            let fotoSrc = "";
+            // PERUBAHAN: Mengambil URL Drive dari Index 9 dan merubahnya ke link Thumbnail
+            let urlDrive = row[9] ? String(row[9]) : ""; 
+            let directFotoLink = getAvatarLink(urlDrive);
 
-            if (!kodeBase64 || kodeBase64 === "-" || kodeBase64 === "") {
-                const initial = nama !== '-' ? nama.charAt(0).toUpperCase() : '?';
-                fotoSrc = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23083344'/><text x='50' y='50' font-family='sans-serif' font-size='45' font-weight='bold' fill='%2322d3ee' text-anchor='middle' dominant-baseline='central'>${initial}</text></svg>`;
-            } else {
-                fotoSrc = `data:image/jpeg;base64,${kodeBase64}`;
-            }
+            let fotoSrc = directFotoLink 
+                ? directFotoLink 
+                : `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23083344'/><text x='50' y='50' font-family='sans-serif' font-size='45' font-weight='bold' fill='%2322d3ee' text-anchor='middle' dominant-baseline='central'>${nama !== '-' ? nama.charAt(0).toUpperCase() : '?'}</text></svg>`;
 
             tableHTML += `
                 <tr class="hover:bg-cyan-500/10 transition-colors group cursor-default">

@@ -20,13 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const deptFilter = urlParams.get('dept'); 
 
-    // ==========================================
-    // FUNGSI SAKTI: KONVERTER URL DRIVE KE THUMBNAIL
-    // ==========================================
     function getAvatarLink(gdriveUrl) {
         if (!gdriveUrl || gdriveUrl === "-" || gdriveUrl.includes("Upload_Error")) return null;
         const match = gdriveUrl.match(/\/d\/([a-zA-Z0-9-_]+)/); 
-        // Menggunakan sz=w400 agar foto profil dimuat dengan sangat cepat dan ringan
         if (match && match[1]) return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w400`;
         return null;
     }
@@ -123,14 +119,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     <tbody class="text-xs font-mono text-slate-300 divide-y divide-cyan-500/10">
         `;
 
-        data.forEach((row, index) => {
-            const idKaryawan = row[1] ? String(row[1]) : '-';
+        data.forEach((row) => {
+            const rowNo = row[0]; // INI KUNCI UTAMANYA SEKARANG (NO BARIS)
+            const idKaryawan = row[1] ? String(row[1]).replace(/'/g, "") : '-'; // Bersihkan kutip agar tampil rapi di tabel
             const nama = row[2] ? String(row[2]) : '-';
             const dept = row[5] ? String(row[5]) : '-';
             const area = row[6] ? String(row[6]) : '-';
             const zone = row[8] ? String(row[8]) : '-';
             
-            // PERUBAHAN: Membaca URL Drive di Index 9, bukan Base64 di Index 11
             let urlDrive = row[9] ? String(row[9]) : ""; 
             let directFotoLink = getAvatarLink(urlDrive);
             
@@ -138,9 +134,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? directFotoLink 
                 : `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23083344'/><text x='50' y='50' font-family='sans-serif' font-size='45' font-weight='bold' fill='%2322d3ee' text-anchor='middle' dominant-baseline='central'>${nama !== '-' ? nama.charAt(0).toUpperCase() : '?'}</text></svg>`;
 
+            // TOMBOL MENGGUNAKAN data-row
             tableHTML += `
                 <tr class="hover:bg-cyan-500/10 transition-colors group cursor-default">
-                    <td class="p-4 text-slate-500">${index + 1}</td>
+                    <td class="p-4 text-slate-500">${rowNo}</td>
                     <td class="p-4 flex justify-center">
                         <div class="w-10 h-10 rounded-xl overflow-hidden border border-cyan-500/30 shadow-[0_0_10px_rgba(6,182,212,0.2)]">
                             <img src="${fotoSrc}" class="w-full h-full object-cover">
@@ -154,10 +151,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-[9px] border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 tracking-widest font-bold">ACTIVE</span>
                     </td>
                     <td class="p-4 text-right">
-                        <button class="btn-edit text-slate-400 hover:text-cyan-400 bg-slate-800 hover:bg-slate-700 p-1.5 rounded-lg transition-all mx-0.5 shadow-sm" data-id="${idKaryawan}" title="Edit Personil">
+                        <button class="btn-edit text-slate-400 hover:text-cyan-400 bg-slate-800 hover:bg-slate-700 p-1.5 rounded-lg transition-all mx-0.5 shadow-sm" data-row="${rowNo}" title="Edit Personil">
                             <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                         </button>
-                        <button class="btn-delete text-slate-400 hover:text-rose-400 bg-slate-800 hover:bg-slate-700 p-1.5 rounded-lg transition-all mx-0.5 shadow-sm" data-id="${idKaryawan}" title="Cabut Akses">
+                        <button class="btn-delete text-slate-400 hover:text-rose-400 bg-slate-800 hover:bg-slate-700 p-1.5 rounded-lg transition-all mx-0.5 shadow-sm" data-row="${rowNo}" data-nama="${nama}" title="Cabut Akses">
                             <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     </td>
@@ -168,9 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
         tableContainer.innerHTML = tableHTML + `</tbody></table></div>`;
     }
 
-    // ==========================================
-    // 6. LOGIKA MODAL FORM
-    // ==========================================
     const formModal = document.getElementById('formModal');
     const modalContent = document.getElementById('modalContent');
     const karyawanForm = document.getElementById('karyawanForm');
@@ -178,7 +172,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const openModal = (mode = 'CREATE', data = null) => {
         document.getElementById('formMode').value = mode;
-        document.getElementById('formOldId').value = (mode === 'UPDATE' && data) ? data[1] : '';
+        // PENTING: Menyimpan Nomor Baris ke memori tersembunyi
+        document.getElementById('formRowNo').value = (mode === 'UPDATE' && data) ? data[0] : '';
 
         document.getElementById('modalTitle').innerHTML = mode === 'CREATE' ? `<span class="w-2 h-2 bg-cyan-400 rounded-full mr-3 shadow-[0_0_8px_#22d3ee]"></span> Registrasi Personil Baru` : `<span class="w-2 h-2 bg-amber-400 rounded-full mr-3 shadow-[0_0_8px_#f59e0b]"></span> Pembaruan Data Personil`;
         
@@ -189,7 +184,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('formDataId').classList.remove('opacity-50', 'cursor-not-allowed', 'bg-slate-800');
 
         if (mode === 'UPDATE' && data) {
-            document.getElementById('formDataId').value = data[1] && data[1] !== '-' ? data[1] : '';
+            // Bersihkan kutip agar form terlihat normal jika ID diawali nol
+            let cleanId = data[1] && data[1] !== '-' ? String(data[1]).replace(/'/g, "") : '';
+            
+            document.getElementById('formDataId').value = cleanId;
             document.getElementById('formDataNama').value = data[2] && data[2] !== '-' ? data[2] : '';
             document.getElementById('formDataGender').value = data[3] && data[3] !== '-' ? data[3] : '';
             document.getElementById('formDataPlant').value = data[4] && data[4] !== '-' ? data[4] : '';
@@ -198,7 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('formDataGroup').value = data[7] && data[7] !== '-' ? data[7] : '';
             document.getElementById('formDataZone').value = data[8] && data[8] !== '-' ? data[8] : '';
 
-            // PERUBAHAN: Membaca URL Drive di Index 9 untuk dimuat ke dalam Modal Edit
             let urlDrive = data[9] ? String(data[9]) : "";
             let directFotoLink = getAvatarLink(urlDrive);
 
@@ -236,9 +233,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('cancelBtn')?.addEventListener('click', closeModal);
     document.getElementById('modalOverlay')?.addEventListener('click', closeModal);
 
-    // ==========================================
-    // 7. KOMPRESI GAMBAR KLIEN
-    // ==========================================
     const fotoInput = document.getElementById('formFoto');
     const fileNameDisplay = document.getElementById('fileNameDisplay');
     const uploadLoader = document.getElementById('uploadLoader'); 
@@ -291,9 +285,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ==========================================
-    // 8. SUBMIT FORM
-    // ==========================================
     if(karyawanForm) {
         karyawanForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -305,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const mode = document.getElementById('formMode').value;
             const payloadData = {
                 userId: savedUserId, 
-                oldIdKaryawan: document.getElementById('formOldId').value.trim(),
+                rowNo: document.getElementById('formRowNo').value, 
                 idKaryawan: document.getElementById('formDataId').value.trim() || "-",
                 nama: document.getElementById('formDataNama').value.trim() || "-",
                 gender: document.getElementById('formDataGender').value || "-",
@@ -336,28 +327,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ==========================================
-    // 9. DELEGASI EVENT AKSI TABEL (EDIT & HAPUS)
-    // ==========================================
     const deleteModal = document.getElementById('deleteConfirmModal');
     const deleteModalContent = document.getElementById('deleteModalContent');
-    let pendingDeleteId = null;
+    let pendingDeleteRow = null; 
 
     if (tableContainer) {
         tableContainer.addEventListener('click', (e) => {
             const editBtn = e.target.closest('.btn-edit');
             if (editBtn) {
-                const idTarget = editBtn.getAttribute('data-id'); 
-                const rowData = allDataCache.find(r => String(r[1]) === idTarget);
+                // TRACKING EDIT MENGGUNAKAN NOMOR BARIS (row[0])
+                const targetRow = editBtn.getAttribute('data-row'); 
+                const rowData = allDataCache.find(r => String(r[0]) === targetRow);
                 if(rowData) openModal('UPDATE', rowData);
                 return; 
             }
 
             const deleteBtn = e.target.closest('.btn-delete');
             if (deleteBtn) {
-                pendingDeleteId = deleteBtn.getAttribute('data-id'); 
+                pendingDeleteRow = deleteBtn.getAttribute('data-row'); 
+                const delNama = deleteBtn.getAttribute('data-nama');
                 if (deleteModal) {
-                    document.getElementById('deleteTargetId').innerText = `ID ${pendingDeleteId}`;
+                    document.getElementById('deleteTargetId').innerText = delNama;
                     deleteModal.classList.remove('hidden'); deleteModal.classList.add('flex');
                     setTimeout(() => {
                         deleteModal.classList.remove('opacity-0');
@@ -373,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
         deleteModal.classList.add('opacity-0'); deleteModalContent.classList.add('scale-95');
         setTimeout(() => {
             deleteModal.classList.add('hidden'); deleteModal.classList.remove('flex');
-            pendingDeleteId = null;
+            pendingDeleteRow = null;
         }, 300);
     };
 
@@ -381,7 +371,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('deleteOverlay')?.addEventListener('click', closeDeleteModal);
 
     document.getElementById('confirmDeleteBtn')?.addEventListener('click', async () => {
-        if(!pendingDeleteId) return;
+        if(!pendingDeleteRow) return;
         
         const btn = document.getElementById('confirmDeleteBtn');
         const originalHtml = btn.innerHTML;
@@ -390,12 +380,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const res = await fetch(APP_CONFIG.GAS_URL, {
-                method: 'POST', body: JSON.stringify({ action: 'DELETE', payload: { userId: savedUserId, idKaryawan: pendingDeleteId } })
+                method: 'POST', body: JSON.stringify({ action: 'DELETE', payload: { userId: savedUserId, rowNo: pendingDeleteRow } })
             });
             const resJson = await res.json();
             if(resJson.status === 'success') {
                 closeDeleteModal();
-                window.showToast(`Personil ID ${pendingDeleteId} berhasil dipindahkan ke sistem Recovery.`, 'success');
+                window.showToast(`Personil berhasil dicabut dan dipindahkan ke Recovery.`, 'success');
                 initSystem(); 
             } else throw new Error(resJson.message);
         } catch (err) { 
