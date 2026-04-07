@@ -97,7 +97,7 @@ export function renderSidebar(containerId, userId, adminRoleDept) {
             <div class="h-32 flex flex-col items-center justify-center px-6 relative z-10 mt-2">
                 <div class="bg-white/60 dark:bg-slate-900/60 backdrop-blur-md px-6 py-3 rounded-[1.25rem] border border-white dark:border-cyan-500/30 shadow-[0_10px_25px_rgba(14,165,233,0.1)] transition-transform duration-500 hover:scale-105 group cursor-default relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-tr from-cyan-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <img src="/src/assets/logo-satoria.png" alt="Satoria Logo" class="h-9 w-auto object-contain filter drop-shadow-[0_2px_8px_rgba(14,165,233,0.3)] dark:drop-shadow-[0_2px_15px_rgba(14,165,233,0.6)] relative z-10">
+                    <img src="/assets/logo-satoria.png" alt="Satoria Logo" class="h-9 w-auto object-contain filter drop-shadow-[0_2px_8px_rgba(14,165,233,0.3)] dark:drop-shadow-[0_2px_15px_rgba(14,165,233,0.6)] relative z-10">
                 </div>
                 <div class="mt-5 flex items-center space-x-2">
                     <span class="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-ping"></span>
