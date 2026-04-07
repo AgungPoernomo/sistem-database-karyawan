@@ -1,11 +1,14 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
+import tailwindcss from '@tailwindcss/vite'; // INI ADALAH MESIN KOMPILATORNYA
 
 export default defineConfig({
+  plugins: [
+    tailwindcss(), // AKTIFKAN PLUGIN DI SINI
+  ],
   build: {
     rollupOptions: {
       input: {
-        // Daftarkan semua pintu masuk (halaman) aplikasi Anda di sini
         main: resolve(__dirname, 'index.html'),
         dashboard: resolve(__dirname, 'pages/dashboard.html'),
         karyawan: resolve(__dirname, 'pages/data-karyawan.html'),

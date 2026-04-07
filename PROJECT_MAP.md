@@ -1,0 +1,61 @@
+# Struktur Project: SISTEM-DATABASE-KARYAWAN
+
+```text
+SISTEM-DATABASE-KARYAWAN/
+├── pages // Kumpulan file antarmuka (UI/UX) HTML
+│   ├── activity-log.html
+│   ├── dashboard.html
+│   ├── data-karyawan.html
+│   ├── plotting-area.html
+│   └── recovery.html
+├── public
+│   ├── favicon.svg
+│   └── icons.svg
+├── src // Folder utama source code aplikasi
+│   ├── assets // Aset statis seperti gambar, ikon, dan font
+│   │   ├── hero.png
+│   │   ├── javascript.svg
+│   │   ├── logo-satoria.png
+│   │   └── vite.svg
+│   ├── components
+│   │   ├── activity
+│   │   │   └── ActivityTable.js
+│   │   ├── dashboard
+│   │   │   ├── DataTable.js
+│   │   │   ├── ModalEngine.js
+│   │   │   ├── StatsCards.js
+│   │   │   └── TopModules.js
+│   │   ├── dataKaryawan
+│   │   │   ├── DataTable.js
+│   │   │   └── EmployeeModal.js
+│   │   ├── plotting
+│   │   │   ├── PlottingEngine.js
+│   │   │   └── PlottingModals.js
+│   │   └── recovery
+│   │       ├── RecoveryModals.js
+│   │       └── RecoveryTable.js
+│   ├── config // Konfigurasi sistem (API, Variabel Global)
+│   │   └── api.js
+│   ├── layouts
+│   │   └── AppLayout.js
+│   ├── pages // Kumpulan file antarmuka (UI/UX) HTML
+│   │   ├── activityLogController.js
+│   │   ├── dashboardController.js
+│   │   ├── dataKaryawanController.js
+│   │   ├── plottingAreaController.js
+│   │   └── recoveryController.js
+│   ├── services
+│   │   └── employeeService.js
+│   ├── utils
+│   │   └── security.js
+│   ├── main.js
+│   └── style.css
+├── .gitignore
+├── index.html // Halaman utama (Pintu masuk / Login System)
+├── package.json // Konfigurasi project Node.js dan dependensi
+├── PROJECT_MAP.md // Dokumentasi struktur project (Auto-generated)
+└── vite.config.js
+
+```
+
+*Terakhir diperbarui pada: 6/4/2026, 09.33.23 WIB*

@@ -4,209 +4,137 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Satoria - Database Personil</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-    <style>
-        body { font-family: 'Space Grotesk', sans-serif; background-color: #030712; }
+    <style type="text/tailwindcss">
+        @custom-variant dark (&:is(.dark *));
+
+        body { font-family: 'Space Grotesk', sans-serif; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(3, 7, 18, 0.8); }
-        ::-webkit-scrollbar-thumb { background: #06b6d4; border-radius: 10px; border: 1px solid rgba(3, 7, 18, 1); }
-        
-        .dash-grid {
-            position: absolute; inset: -100%;
-            background-image: linear-gradient(rgba(6, 182, 212, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px; animation: panGrid 20s linear infinite; z-index: 0; pointer-events: none;
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; }
+        ::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
+
+        /* --- SPATIAL GRID BACKGROUND --- */
+        .spatial-grid {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image: 
+                linear-gradient(to right, rgba(14, 165, 233, 0.15) 1px, transparent 1px), 
+                linear-gradient(to bottom, rgba(14, 165, 233, 0.15) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 40%, transparent 90%);
+            -webkit-mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 40%, transparent 90%);
+            transform: perspective(600px) rotateX(60deg) translateY(-100px) scale(3);
+            animation: gridMove 15s linear infinite;
         }
-        @keyframes panGrid { 0% { transform: translate(0, 0); } 100% { transform: translate(40px, 40px); } }
+        .dark .spatial-grid {
+            background-image: 
+                linear-gradient(to right, rgba(56, 189, 248, 0.15) 1px, transparent 1px), 
+                linear-gradient(to bottom, rgba(56, 189, 248, 0.15) 1px, transparent 1px);
+            filter: drop-shadow(0 0 2px rgba(14, 165, 233, 0.5));
+        }
+        @keyframes gridMove {
+            0% { transform: perspective(600px) rotateX(60deg) translateY(0) scale(3); }
+            100% { transform: perspective(600px) rotateX(60deg) translateY(50px) scale(3); }
+        }
 
-        .panel-glass { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(24px); border: 1px solid rgba(6, 182, 212, 0.2); }
+        /* --- SPATIAL ISLAND --- */
+        .spatial-island {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.4) 100%);
+            backdrop-filter: blur(30px) saturate(200%); -webkit-backdrop-filter: blur(30px) saturate(200%);
+            border-top: 1.5px solid rgba(255, 255, 255, 1); border-left: 1.5px solid rgba(255, 255, 255, 0.9); 
+            border-right: 1px solid rgba(255, 255, 255, 0.3); border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(14, 165, 233, 0.15), inset 0 0 25px rgba(255, 255, 255, 1);
+        }
+        .dark .spatial-island {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(2, 6, 23, 0.6) 100%);
+            border-top: 1.5px solid rgba(14, 165, 233, 0.5); border-left: 1px solid rgba(14, 165, 233, 0.3); 
+            border-right: 1px solid rgba(255, 255, 255, 0.05); border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), inset 0 2px 20px rgba(14, 165, 233, 0.15);
+        }
+
+        /* --- KACA INPUT FORM --- */
+        .glass-input {
+            background: rgba(255, 255, 255, 0.5); border: 1px solid rgba(14, 165, 233, 0.2);
+            backdrop-filter: blur(10px); transition: all 0.3s ease;
+        }
+        .dark .glass-input { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(56, 189, 248, 0.2); }
+        .glass-input:focus { background: rgba(255, 255, 255, 0.9); border-color: #0ea5e9; box-shadow: 0 0 15px rgba(14, 165, 233, 0.2); }
+        .dark .glass-input:focus { background: rgba(2, 6, 23, 0.8); border-color: #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
+
+        .no-transitions * { transition: none !important; animation: none !important; }
     </style>
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('satoria_theme') || 'light';
+            if (savedTheme === 'dark') { document.documentElement.classList.add('dark'); } 
+            else { document.documentElement.classList.remove('dark'); }
+        })();
+    </script>
 </head>
-<body class="text-slate-300 h-screen flex flex-col overflow-hidden antialiased relative">
-    
-    <div class="dash-grid"></div>
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[300px] bg-cyan-600/10 blur-[120px] rounded-full z-0 pointer-events-none"></div>
+<body id="app-body" class="bg-[#e1e4e7] text-slate-800 dark:bg-slate-950 dark:text-slate-300 h-screen flex overflow-hidden antialiased relative selection:bg-cyan-500 selection:text-white">    
+    <div class="spatial-grid"></div>
 
-    <div id="customToast" class="fixed top-5 right-5 z-[100] transform transition-all duration-300 translate-x-[120%] opacity-0 flex items-center p-4 mb-4 text-white bg-slate-900 rounded-lg shadow-[0_0_20px_rgba(0,0,0,0.5)] border-l-4" role="alert">
-        <div id="toastIcon" class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg"></div>
-        <div id="toastMessage" class="ml-3 text-sm font-medium pr-4 font-mono tracking-wide">Notifikasi</div>
-        <button type="button" onclick="closeToast()" class="ml-auto -mx-1.5 -my-1.5 bg-slate-800 text-slate-400 hover:text-white rounded-lg p-1.5 inline-flex h-8 w-8 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    <div id="customToast" class="fixed top-5 right-5 z-[100] transform transition-all duration-400 translate-x-[120%] opacity-0 flex items-center p-4 mb-4 text-slate-800 bg-white/90 dark:text-white dark:bg-slate-900/90 backdrop-blur-md rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-white dark:border-slate-700/50" role="alert">
+        <div id="toastIcon" class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-xl mr-3"></div>
+        <div id="toastMessage" class="text-sm font-bold pr-6 font-mono tracking-wide">Notifikasi</div>
+        <button type="button" onclick="window.dataKaryawanApp.closeToast()" class="ml-auto -mx-1.5 -my-1.5 bg-white/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg p-1.5 inline-flex h-8 w-8 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
     </div>
 
-    <header class="relative z-10 h-20 flex items-center justify-between px-8 border-b border-cyan-500/30 panel-glass shadow-lg flex-shrink-0">
-        <div class="flex items-center">
-            <button onclick="window.location.href='/pages/dashboard.html'" class="mr-6 p-2 rounded-xl bg-slate-900/50 text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/10 border border-cyan-500/30 transition-all hover:scale-105 active:scale-95 group">
-                <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-            </button>
-            <div>
-                <h2 class="text-2xl font-bold text-white tracking-tight uppercase flex items-center">
-                    Database Personil
-                    <span id="filterBadge" class="ml-4 text-[10px] bg-cyan-500/20 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/30 tracking-widest hidden animate-pulse">FILTER AKTIF</span>
-                </h2>
-                <p id="filterDescription" class="text-xs font-mono text-cyan-500/70 mt-1 uppercase tracking-widest">Pusat Manajemen & Integrasi Data Operasional</p>
-            </div>
-        </div>
-        
-        <div class="flex items-center space-x-4">
-            <div class="relative font-mono shadow-inner">
-                <input type="text" id="searchInput" placeholder="Cari ID atau Nama Personil..." class="pl-10 pr-4 py-2.5 bg-slate-950/80 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-all w-72">
-                <svg class="w-4 h-4 text-slate-500 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            </div>
-            <button id="openAddModalBtn" class="bg-cyan-600 hover:bg-cyan-500 text-slate-950 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all flex items-center hover:-translate-y-0.5 active:translate-y-0">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> Registrasi
-            </button>
-        </div>
-    </header>
+    <div id="app-sidebar" class="z-30 h-full flex-shrink-0 w-[316px] hidden lg:block"></div>
 
-    <main class="relative z-10 flex-1 overflow-hidden p-6 flex flex-col">
-        <div class="panel-glass rounded-3xl flex flex-col flex-1 overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.4)] bg-slate-950">
-            <div class="px-6 py-4 border-b border-cyan-500/30 flex justify-between items-center bg-slate-900/80 shadow-md">
-                <h3 class="text-xs font-bold text-white uppercase tracking-widest flex items-center">
-                    <span class="w-2 h-2 bg-cyan-400 rounded-full mr-3 shadow-[0_0_8px_#22d3ee]"></span>
-                    Tabel Data: <span id="tableTitle" class="ml-2 text-cyan-400">Seluruh Departemen</span>
-                </h3>
-                <p class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Total Personil Terdaftar: <span id="rowCount" class="text-cyan-400 font-bold text-xs ml-1">0</span></p>
-            </div>
+    <main class="relative z-10 flex-1 flex flex-col h-full overflow-hidden">
+        
+        <div id="app-header"></div>
+
+        <div class="flex-1 overflow-hidden px-6 pb-6 pt-2 flex flex-col gap-6">
             
-            <div id="tableContainer" class="flex-1 overflow-hidden p-0 relative bg-slate-950/50">
+            <div class="spatial-island p-4 rounded-[2rem] flex flex-wrap items-center gap-3 z-20 relative">
+                <div class="relative flex-1 min-w-[200px] font-mono group">
+                    <input type="text" id="searchInput" placeholder="Scan ID / Nama..." class="w-full pl-11 pr-4 py-3 rounded-2xl text-sm font-bold placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none transition-all glass-input">
+                    <svg class="w-5 h-5 text-slate-400 group-hover:text-cyan-500 absolute left-4 top-3.5 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
+
+                <select id="filterDept" class="px-4 py-3 rounded-2xl text-xs font-bold uppercase tracking-widest text-cyan-700 dark:text-cyan-400 focus:outline-none transition-all glass-input cursor-pointer appearance-none min-w-[130px]"><option value="Semua">DEPT (ALL)</option></select>
+                <select id="filterGender" class="px-4 py-3 rounded-2xl text-xs font-bold uppercase tracking-widest text-cyan-700 dark:text-cyan-400 focus:outline-none transition-all glass-input cursor-pointer appearance-none min-w-[130px]"><option value="Semua">GENDER (ALL)</option></select>
+                <select id="filterPlant" class="px-4 py-3 rounded-2xl text-xs font-bold uppercase tracking-widest text-cyan-700 dark:text-cyan-400 focus:outline-none transition-all glass-input cursor-pointer appearance-none min-w-[130px]"><option value="Semua">PLANT (ALL)</option></select>
+                <select id="filterGroup" class="px-4 py-3 rounded-2xl text-xs font-bold uppercase tracking-widest text-cyan-700 dark:text-cyan-400 focus:outline-none transition-all glass-input cursor-pointer appearance-none min-w-[130px]"><option value="Semua">GRUP (ALL)</option></select>
+                <select id="filterArea" class="px-4 py-3 rounded-2xl text-xs font-bold uppercase tracking-widest text-cyan-700 dark:text-cyan-400 focus:outline-none transition-all glass-input cursor-pointer appearance-none min-w-[130px]"><option value="Semua">AREA (ALL)</option></select>
+                <select id="filterZone" class="px-4 py-3 rounded-2xl text-xs font-bold uppercase tracking-widest text-cyan-700 dark:text-cyan-400 focus:outline-none transition-all glass-input cursor-pointer appearance-none min-w-[130px]"><option value="Semua">ZONE (ALL)</option></select>
+                
+                <button id="resetFilterBtn" class="p-3 rounded-2xl bg-rose-500/10 text-rose-500 border border-rose-500/30 hover:bg-rose-500 hover:text-white transition-all hidden" title="Reset Filter">
+                    <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                </button>
+                
+                <button id="openAddModalBtn" class="bg-cyan-600 hover:bg-cyan-500 text-white px-5 py-3 rounded-2xl text-xs font-bold font-mono uppercase tracking-widest shadow-[0_5px_15px_rgba(14,165,233,0.3)] transition-all flex items-center hover:-translate-y-1">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Registrasi Node
+                </button>
+            </div>
+
+            <div class="spatial-island rounded-[2.5rem] flex flex-col flex-1 overflow-hidden relative z-10 border-t-2 border-t-white/80 dark:border-t-cyan-400/30 mb-2">
+                <div class="px-8 py-5 border-b border-white/50 dark:border-slate-800/80 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md flex justify-between items-center z-10 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white uppercase tracking-widest flex items-center font-mono">
+                        <span class="w-2 h-8 bg-cyan-500 rounded-full mr-4 shadow-[0_0_10px_rgba(14,165,233,0.5)]"></span> Entri Master Database
+                    </h3>
+                    <div class="flex items-center space-x-4">
+                        <span id="filterBadge" class="text-[9px] bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 px-3 py-1.5 rounded-xl border border-cyan-500/30 tracking-widest hidden font-bold font-mono"></span>
+                        <div class="flex items-center space-x-3 bg-white/60 dark:bg-slate-950/60 px-4 py-1.5 rounded-xl border border-white/80 dark:border-cyan-500/20 shadow-inner">
+                            <span class="text-[9px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold">Total Record</span>
+                            <span id="rowCount" class="text-cyan-600 dark:text-cyan-400 text-xs font-black font-mono ml-2">0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="tableContainer" class="flex-1 overflow-hidden p-0 relative bg-white/30 dark:bg-transparent"></div>
+            </div>
         </div>
     </main>
 
-    <div id="formModal" class="fixed inset-0 z-[60] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
-        <div id="modalOverlay" class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm cursor-pointer"></div>
-        
-        <div class="relative z-10 w-full max-w-2xl p-8 panel-glass rounded-3xl shadow-[0_0_50px_rgba(6,182,212,0.2)] transform scale-95 transition-transform duration-300 bg-slate-950" id="modalContent">
-            
-            <div class="flex justify-between items-center mb-6 border-b border-cyan-500/30 pb-4">
-                <h3 id="modalTitle" class="text-sm font-bold text-white uppercase tracking-widest flex items-center">
-                    <span class="w-2 h-2 bg-cyan-400 rounded-full mr-3 shadow-[0_0_8px_#22d3ee]"></span> Registrasi Personil Baru
-                </h3>
-                <button id="closeModalBtn" class="text-slate-500 hover:text-rose-500 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
+    <div id="app-modal"></div>
 
-            <form id="karyawanForm" class="space-y-4">
-                <input type="hidden" id="formMode" value="CREATE"> 
-                <input type="hidden" id="formRowNo" value=""> 
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div class="space-y-1.5">
-                        <label class="text-[10px] font-bold text-cyan-300/80 uppercase tracking-widest">ID Personil (Angka Saja)</label>
-                        <input type="text" id="formDataId" pattern="[0-9]*" title="Hanya angka" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 transition-colors shadow-inner">
-                    </div>
-                    <div class="space-y-1.5">
-                        <label class="text-[10px] font-bold text-cyan-300/80 uppercase tracking-widest">Nama Lengkap</label>
-                        <input type="text" id="formDataNama" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 transition-colors shadow-inner">
-                    </div>
-                    
-                    <div class="space-y-1.5">
-                        <label class="text-[10px] font-bold text-cyan-300/80 uppercase tracking-widest">Gender</label>
-                        <select id="formDataGender" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 appearance-none shadow-inner"><option value="">-- Pilihan Opsional --</option></select>
-                    </div>
-                    <div class="space-y-1.5">
-                        <label class="text-[10px] font-bold text-cyan-300/80 uppercase tracking-widest">Plant / Line</label>
-                        <select id="formDataPlant" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 appearance-none shadow-inner"><option value="">-- Pilihan Opsional --</option></select>
-                    </div>
-                    <div class="space-y-1.5">
-                        <label class="text-[10px] font-bold text-cyan-300/80 uppercase tracking-widest">Departemen</label>
-                        <select id="formDataDept" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 appearance-none shadow-inner"><option value="">-- Pilihan Opsional --</option></select>
-                    </div>
-                    <div class="space-y-1.5">
-                        <label class="text-[10px] font-bold text-cyan-300/80 uppercase tracking-widest">Alokasi Area</label>
-                        <select id="formDataArea" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 appearance-none shadow-inner"><option value="">-- Pilihan Opsional --</option></select>
-                    </div>
-                    <div class="space-y-1.5">
-                        <label class="text-[10px] font-bold text-cyan-300/80 uppercase tracking-widest">Grup Kerja</label>
-                        <select id="formDataGroup" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 appearance-none shadow-inner"><option value="">-- Pilihan Opsional --</option></select>
-                    </div>
-                    <div class="space-y-1.5">
-                        <label class="text-[10px] font-bold text-cyan-300/80 uppercase tracking-widest">Spesifik Zone</label>
-                        <select id="formDataZone" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500 appearance-none shadow-inner"><option value="">-- Pilihan Opsional --</option></select>
-                    </div>
-                </div>
-
-                <div class="space-y-1.5 mt-4 border-t border-slate-800 pt-4">
-                    <label class="text-[10px] font-bold text-cyan-300/80 uppercase tracking-widest">Identitas Visual Personil (Maks. 2 MB)</label>
-                    <div class="flex items-center space-x-5">
-                        <div class="w-24 h-24 rounded-2xl overflow-hidden border border-slate-600 bg-slate-900 flex-shrink-0 relative group shadow-md">
-                            <img id="previewFoto" src="" alt="Preview" class="w-full h-full object-cover hidden">
-                            <div id="previewInitials" class="w-full h-full flex items-center justify-center text-3xl font-bold text-cyan-500 bg-slate-900 shadow-[inset_0_0_15px_rgba(6,182,212,0.1)]">?</div>
-                            <div id="uploadLoader" class="absolute inset-0 bg-slate-950/90 hidden flex-col items-center justify-center backdrop-blur-sm transition-all z-10">
-                                <svg class="animate-spin h-6 w-6 text-cyan-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                            </div>
-                        </div>
-
-                        <div class="relative flex-1">
-                            <label for="formFoto" class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-cyan-500/40 rounded-2xl cursor-pointer bg-slate-900/50 hover:bg-slate-800 hover:border-cyan-400 transition-all group">
-                                <svg class="w-6 h-6 text-cyan-500/60 mb-2 group-hover:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                                <p class="text-[10px] text-cyan-200/60 font-mono tracking-wide"><span class="font-bold text-cyan-400">Klik untuk Otorisasi File</span></p>
-                                <input id="formFoto" type="file" class="hidden" accept="image/png, image/jpeg, image/jpg" />
-                            </label>
-                        </div>
-                    </div>
-                    <p id="fileNameDisplay" class="text-[10px] text-emerald-400 font-mono mt-2 hidden bg-emerald-500/10 px-2 py-1 rounded inline-block border border-emerald-500/20"></p>
-                </div>
-
-                <div class="pt-6 mt-4 border-t border-cyan-500/30 flex justify-end items-center">
-                    <button type="button" id="cancelBtn" class="px-5 py-2.5 mr-3 text-slate-400 font-mono text-xs font-bold uppercase tracking-wider hover:text-white transition-colors">Batal</button>
-                    <button type="submit" id="submitFormBtn" class="bg-cyan-600 hover:bg-cyan-500 text-slate-950 px-7 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all flex items-center hover:-translate-y-0.5 active:translate-y-0">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        Simpan Data
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="deleteConfirmModal" class="fixed inset-0 z-[70] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
-        <div id="deleteOverlay" class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm cursor-pointer"></div>
-        <div class="relative z-10 w-full max-w-md p-8 panel-glass rounded-3xl shadow-[0_0_50px_rgba(244,63,94,0.2)] transform scale-95 transition-transform duration-300 text-center bg-slate-950 border-rose-500/30" id="deleteModalContent">
-            <div class="w-20 h-20 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto mb-6 shadow-[0_0_20px_rgba(244,63,94,0.3)]">
-                <svg class="w-10 h-10 text-rose-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-            </div>
-            <h3 class="text-xl font-bold text-white mb-2 uppercase tracking-widest">Otorisasi Penghapusan</h3>
-            <p class="text-xs font-mono text-slate-400 mb-8 leading-relaxed">Personil <span id="deleteTargetId" class="text-rose-400 font-bold px-1 bg-rose-500/10 rounded"></span> akan dicabut aksesnya dan dipindahkan ke sistem <span class="text-amber-400">Data Recovery</span>. Lanjutkan eksekusi?</p>
-            <div class="flex justify-center space-x-4">
-                <button id="cancelDeleteBtn" class="px-6 py-2.5 text-slate-400 font-mono text-xs font-bold uppercase tracking-wider hover:text-white transition-colors bg-slate-800 rounded-xl">Batal</button>
-                <button id="confirmDeleteBtn" class="bg-rose-600 hover:bg-rose-500 text-white px-7 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-[0_0_20px_rgba(244,63,94,0.4)] transition-all flex items-center hover:-translate-y-0.5 active:translate-y-0">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                    Hapus data
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script type="module" src="/src/js/data-karyawan.js"></script>
-    <script>
-        window.showToast = function(message, type = 'success') {
-            const toast = document.getElementById('customToast');
-            const icon = document.getElementById('toastIcon');
-            document.getElementById('toastMessage').innerText = message;
-            
-            toast.classList.remove('border-emerald-500', 'border-rose-500', 'border-amber-500');
-            icon.classList.remove('bg-emerald-500/20', 'text-emerald-400', 'bg-rose-500/20', 'text-rose-400', 'bg-amber-500/20', 'text-amber-400');
-            
-            if(type === 'success') {
-                toast.classList.add('border-emerald-500'); icon.classList.add('bg-emerald-500/20', 'text-emerald-400');
-                icon.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
-            } else if (type === 'error') {
-                toast.classList.add('border-rose-500'); icon.classList.add('bg-rose-500/20', 'text-rose-400');
-                icon.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
-            } else {
-                toast.classList.add('border-amber-500'); icon.classList.add('bg-amber-500/20', 'text-amber-400');
-                icon.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
-            }
-
-            toast.classList.remove('translate-x-[120%]', 'opacity-0');
-            setTimeout(() => window.closeToast(), 4000);
-        };
-        window.closeToast = function() {
-            document.getElementById('customToast').classList.add('translate-x-[120%]', 'opacity-0');
-        };
-    </script>
+    <script type="module" src="/src/pages/dataKaryawanController.js"></script>
 </body>
 </html>
