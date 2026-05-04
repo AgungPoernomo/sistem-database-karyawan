@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     if(headerTitle) headerTitle.innerText = "DATA RECOVERY VAULT";
     if(headerSub) {
-        headerSub.innerText = "Sistem Retensi & Pemulihan Karantina Aset Digital";
+        headerSub.innerText = "Sistem Karantina & Pemulihan Data Karyawan";
         headerSub.classList.replace('text-cyan-600', 'text-amber-600');
         headerSub.classList.replace('dark:text-cyan-400', 'dark:text-amber-400');
     }
@@ -64,26 +64,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         closeToast: function() { document.getElementById('customToast').classList.add('translate-x-[120%]', 'opacity-0'); }
     };
 
-    // 4. INIT MODAL (Menjalankan fetch data jika user klik Paham)
+    // 4. INIT MODAL
     initRecoveryModals('app-modal', fetchTrashData);
 
     const recoveryContainer = document.getElementById('recoveryContainer');
     
-    // 5. FUNGSI TARIK DATA
+    // 5. FUNGSI TARIK DATA (MENGIRIM USER ID KE BACKEND)
     async function fetchTrashData() {
         recoveryContainer.innerHTML = `<div class="p-8 h-full flex flex-col items-center justify-center text-amber-600 dark:text-amber-400 font-mono text-[10px] tracking-[0.2em] font-bold uppercase animate-pulse"><span class="w-8 h-8 border-t-2 border-amber-500 rounded-full animate-spin mb-4 shadow-[0_0_10px_#f59e0b]"></span>Memindai Celah Karantina...</div>`;
         try {
             const response = await fetch(APP_CONFIG.GAS_URL, {
-                method: 'POST', body: JSON.stringify({ action: 'READ_TRASH' }) 
+                method: 'POST', 
+                // SISIPKAN payload: { userId: savedUserId } agar App Script tahu siapa yang request
+                body: JSON.stringify({ action: 'READ_TRASH', payload: { userId: savedUserId } }) 
             });
             const result = await response.json();
             
             if (result.status === 'success') {
-                let data = result.data || [];
-                if (!isSuperAdmin && adminRoleDept) {
-                    data = data.filter(row => String(row[6] || '').toUpperCase().includes(adminRoleDept));
-                }
-                renderRecoveryTable('recoveryContainer', data);
+                // Backend sudah memfilter data, langsung render!
+                renderRecoveryTable('recoveryContainer', result.data || []);
             } else {
                 throw new Error(result.message);
             }

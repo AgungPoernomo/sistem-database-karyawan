@@ -1,17 +1,15 @@
 import fs from 'fs';
 import path from 'path';
 
-// 1. DAFTAR PENGECUALIAN (Folder/file yang tidak akan ditampilkan)
 const IGNORE_LIST = [
     'node_modules', 
     '.git', 
     '.vscode', 
     'dist', 
     'package-lock.json',
-    'generate-map.js' // Abaikan script ini sendiri
+    'generate-map.js'
 ];
 
-// 2. KAMUS DESKRIPSI (Tambahkan atau ubah sesuai kebutuhan project Anda)
 const DESCRIPTIONS = {
     'src': 'Folder utama source code aplikasi',
     'pages': 'Kumpulan file antarmuka (UI/UX) HTML',
@@ -26,11 +24,9 @@ const DESCRIPTIONS = {
 function generateTree(dir, prefix = '') {
     let output = '';
     
-    // Baca direktori dan filter file/folder yang masuk IGNORE_LIST
     const items = fs.readdirSync(dir)
         .filter(item => !IGNORE_LIST.includes(item))
         .sort((a, b) => {
-            // Urutkan: folder di atas, file di bawah
             const aIsDir = fs.statSync(path.join(dir, a)).isDirectory();
             const bIsDir = fs.statSync(path.join(dir, b)).isDirectory();
             if (aIsDir && !bIsDir) return -1;

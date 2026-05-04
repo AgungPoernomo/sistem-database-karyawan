@@ -1,26 +1,28 @@
+// src/services/employeeService.js
 import { APP_CONFIG } from '../config/api.js';
 
 export const EmployeeService = {
-    /**
-     * Mengambil seluruh data karyawan dari Google Apps Script
-     * @returns {Promise<Array>} Array data karyawan mentah
-     */
     async getAllEmployees() {
+        const savedUserId = localStorage.getItem('nexus_user');
+        
         try {
             const response = await fetch(APP_CONFIG.GAS_URL, {
                 method: 'POST',
-                body: JSON.stringify({ action: 'READ' })
+                body: JSON.stringify({ 
+                    action: 'READ',
+                    // SISIPKAN PAYLOAD BERISI USERID UNTUK BACKEND FILTERING
+                    payload: { userId: savedUserId } 
+                })
             });
             const result = await response.json();
-            
             if (result.status === 'success') {
-                return result.data || [];
+                return result.data;
             } else {
-                throw new Error(result.message || "Gagal memuat data dari server.");
+                throw new Error(result.message);
             }
         } catch (error) {
-            console.error("EmployeeService Error:", error);
-            throw new Error("Koneksi terputus. Pastikan jaringan aman.");
+            console.error('Error fetching employees:', error);
+            throw error;
         }
     }
 };

@@ -9,13 +9,14 @@ SISTEM-DATABASE-KARYAWAN/
 │   ├── plotting-area.html
 │   └── recovery.html
 ├── public
+│   ├── assets // Aset statis seperti gambar, ikon, dan font
+│   │   └── logo-satoria.png
 │   ├── favicon.svg
 │   └── icons.svg
 ├── src // Folder utama source code aplikasi
 │   ├── assets // Aset statis seperti gambar, ikon, dan font
 │   │   ├── hero.png
 │   │   ├── javascript.svg
-│   │   ├── logo-satoria.png
 │   │   └── vite.svg
 │   ├── components
 │   │   ├── activity
@@ -29,6 +30,12 @@ SISTEM-DATABASE-KARYAWAN/
 │   │   │   ├── DataTable.js
 │   │   │   └── EmployeeModal.js
 │   │   ├── plotting
+│   │   │   ├── areaoutdoor
+│   │   │   │   └── OutdoorEngine.js
+│   │   │   ├── cleaningmachine
+│   │   │   │   └── MachineEngine.js
+│   │   │   ├── cleaningroom
+│   │   │   │   └── RoomEngine.js
 │   │   │   ├── PlottingEngine.js
 │   │   │   └── PlottingModals.js
 │   │   └── recovery
@@ -39,10 +46,14 @@ SISTEM-DATABASE-KARYAWAN/
 │   ├── layouts
 │   │   └── AppLayout.js
 │   ├── pages // Kumpulan file antarmuka (UI/UX) HTML
+│   │   ├── plottingarea
+│   │   │   ├── mainPlottingOrchestrator.js
+│   │   │   ├── plottingMachineController.js
+│   │   │   ├── plottingOutdoorController.js
+│   │   │   └── plottingRoomController.js
 │   │   ├── activityLogController.js
 │   │   ├── dashboardController.js
 │   │   ├── dataKaryawanController.js
-│   │   ├── plottingAreaController.js
 │   │   └── recoveryController.js
 │   ├── services
 │   │   └── employeeService.js
@@ -58,4 +69,4 @@ SISTEM-DATABASE-KARYAWAN/
 
 ```
 
-*Terakhir diperbarui pada: 6/4/2026, 09.33.23 WIB*
+*Terakhir diperbarui pada: 3/5/2026, 17.12.16 WIB*

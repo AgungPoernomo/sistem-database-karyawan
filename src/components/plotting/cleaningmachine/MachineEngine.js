@@ -99,11 +99,11 @@ export function renderMachineTable(data) {
         }
 
         let directFotoLink = getAvatarLink(row[9] ? String(row[9]) : "");
-        let fotoSrc = directFotoLink ? directFotoLink : `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23f1f5f9'/><text x='50' y='50' font-family='monospace' font-size='40' font-weight='bold' fill='%2394a3b8' text-anchor='middle' dominant-baseline='central'>${nama !== '-' ? nama.charAt(0).toUpperCase() : '?'}</text></svg>`;
+        let FotoSrc = directFotoLink ? directFotoLink : `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23f1f5f9'/><text x='50' y='50' font-family='monospace' font-size='40' font-weight='bold' fill='%2394a3b8' text-anchor='middle' dominant-baseline='central'>${nama !== '-' ? nama.charAt(0).toUpperCase() : '?'}</text></svg>`;
 
         tbodyHTML += `
             <tr class="hover:bg-white/60 dark:hover:bg-emerald-900/10 transition-colors group cursor-default">
-                <td class="p-3 pl-6 flex justify-center"><div class="w-10 h-10 rounded-xl overflow-hidden border border-white dark:border-slate-700 shadow-sm bg-slate-100 dark:bg-transparent"><img src="${fotoSrc}" class="w-full h-full object-cover"></div></td>
+                <td class="p-3 pl-6 flex justify-center"><div class="w-10 h-10 rounded-xl overflow-hidden border border-white dark:border-slate-700 shadow-sm bg-slate-100 dark:bg-transparent"><img src="${FotoSrc}" class="w-full h-full object-cover"></div></td>
                 <td class="p-3 font-black text-slate-900 dark:text-emerald-400 text-xs">${id}</td>
                 <td class="p-3 text-slate-800 dark:text-white font-bold truncate max-w-[150px]"><span class="text-xs">${nama}</span><br><span class="text-[9px] text-slate-400 tracking-wider">${dept}</span></td>
                 <td class="p-3 text-center text-slate-600 dark:text-emerald-100 font-bold">${grp}</td>
@@ -115,7 +115,7 @@ export function renderMachineTable(data) {
     tableContainer.innerHTML = `
         <table class="w-full text-left whitespace-nowrap text-[10px] font-mono tracking-widest">
             <thead class="sticky top-0 bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl z-10 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-emerald-500/80 shadow-sm">
-                <tr><th class="p-4 font-bold text-center pl-6">Visual</th><th class="p-4 font-bold">ID Node</th><th class="p-4 font-bold">Identitas Asli</th><th class="p-4 font-bold text-center">Grup</th><th class="p-4 font-bold text-center">Zonasi</th><th class="p-4 font-bold pr-6">Kode Spasial</th></tr>
+                <tr><th class="p-4 font-bold text-center pl-6">Foto</th><th class="p-4 font-bold">NIK</th><th class="p-4 font-bold">Nama Karyawan</th><th class="p-4 font-bold text-center">Grup</th><th class="p-4 font-bold text-center">Zonasi</th><th class="p-4 font-bold pr-6">Kode Spasial</th></tr>
             </thead>
             <tbody class="text-slate-700 dark:text-slate-300 divide-y divide-slate-100 dark:divide-slate-800/50">${tbodyHTML}</tbody>
         </table>`;

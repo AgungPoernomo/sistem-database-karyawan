@@ -17,7 +17,7 @@ export function renderActivityTable(containerId, data) {
                         <th class="p-5 font-bold pl-8">Timestamp Server</th>
                         <th class="p-5 font-bold">Protokol & Otorisator</th>
                         <th class="p-5 font-bold">ID Entitas Target</th>
-                        <th class="p-5 font-bold pr-8">Label Entitas</th>
+                        <th class="p-5 font-bold pr-8">Nama Karyawan</th>
                     </tr>
                 </thead>
                 <tbody class="text-slate-700 dark:text-slate-300 divide-y divide-slate-100 dark:divide-indigo-500/10">

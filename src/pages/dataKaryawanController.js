@@ -3,7 +3,7 @@
 import { APP_CONFIG } from '../config/api.js';
 import { renderSidebar, renderHeader, initThemeAndLogout } from '../layouts/AppLayout.js';
 import { initEmployeeModals } from '../components/dataKaryawan/EmployeeModal.js';
-import { renderDataTable } from '../components/dataKaryawan/DataTable.js'; // IMPORT KOMPONEN TABEL BARU
+import { renderDataTable } from '../components/dataKaryawan/DataTable.js';
 import { EmployeeService } from '../services/employeeService.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const headerTitle = document.querySelector('#app-header h2');
     const headerSub = document.querySelector('#app-header p');
-    if(headerTitle) headerTitle.innerText = "DATABASE PERSONIL SATORIA";
+    if(headerTitle) headerTitle.innerText = "DATABASE KARYAWAN SATORIA ANEKA INDUSTRI";
     if(headerSub) headerSub.innerText = "Manajemen & Tata Kelola Identitas Node";
 
     // 3. FITUR TOAST WEB3
@@ -225,6 +225,51 @@ document.addEventListener('DOMContentLoaded', async () => {
             const targetNama = deleteBtn.getAttribute('data-nama');
             window.dataKaryawanApp.openDeleteModal(targetRow, targetNama);
         }
+    });
+
+    // 7. EVENT LISTENER EXPORT EXCEL & PDF
+    document.getElementById('exportExcelBtn')?.addEventListener('click', () => {
+        if (filteredDataCache.length === 0) return window.dataKaryawanApp.showToast("Tidak ada data untuk di-export", "error");
+        
+        const headers = ["No", "NIK", "Nama Karyawan", "Gender", "Plant", "Departemen", "Area", "Grup", "Zone"];
+        const dataToExport = filteredDataCache.map((row, i) => [
+            i + 1, row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8]
+        ]);
+        
+        // Memanfaatkan library XLSX dari CDN
+        const worksheet = XLSX.utils.aoa_to_sheet([headers, ...dataToExport]);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Data_Karyawan");
+        XLSX.writeFile(workbook, "Database_Personil.xlsx");
+        window.dataKaryawanApp.showToast("Berhasil mendownload Excel", "success");
+    });
+
+    document.getElementById('exportPdfBtn')?.addEventListener('click', () => {
+        if (filteredDataCache.length === 0) return window.dataKaryawanApp.showToast("Tidak ada data untuk di-export", "error");
+        
+        // Memanfaatkan library jsPDF & autoTable dari CDN
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('landscape');
+        
+        const headers = [["No", "NIK", "Nama Karyawan", "Gender", "Plant", "Departemen", "Area", "Grup", "Zone"]];
+        const dataToExport = filteredDataCache.map((row, i) => [
+            i + 1, row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8]
+        ]);
+
+        doc.setFontSize(14);
+        doc.text("DATABASE KARYAWAN SATORIA ANEKA INDUSTRI", 14, 15);
+        
+        doc.autoTable({
+            head: headers,
+            body: dataToExport,
+            startY: 20,
+            theme: 'grid',
+            styles: { fontSize: 8, font: 'helvetica' },
+            headStyles: { fillColor: [14, 165, 233] } // Warna cyan sesuai tema aplikasi
+        });
+        
+        doc.save("Database_Personil.pdf");
+        window.dataKaryawanApp.showToast("Berhasil mendownload PDF", "success");
     });
 
     initSystem();

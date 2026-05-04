@@ -22,10 +22,11 @@ export function renderRecoveryTable(containerId, data) {
                 <thead class="sticky top-0 bg-white/90 dark:bg-[#030712]/90 backdrop-blur-xl z-10 border-b border-slate-200/50 dark:border-amber-500/20 text-amber-700 dark:text-amber-500 shadow-sm">
                     <tr>
                         <th class="p-4 font-bold pl-8">Waktu Isolasi</th>
-                        <th class="p-4 font-bold text-center">Visual</th>
+                        <th class="p-4 font-bold text-center">Foto</th>
                         <th class="p-4 font-bold">ID Personil</th>
-                        <th class="p-4 font-bold">Identitas Asli</th>
+                        <th class="p-4 font-bold">Nama Karyawan</th>
                         <th class="p-4 font-bold">Posisi Terakhir</th>
+                        <th class="p-4 font-bold">Reason</th>
                         <th class="p-4 font-bold text-center">Masa Retensi</th>
                         <th class="p-4 font-bold text-right pr-8">Otorisasi</th>
                     </tr>
@@ -40,6 +41,7 @@ export function renderRecoveryTable(containerId, data) {
         const idKaryawan = row[2] ? String(row[2]).replace(/'/g, "") : '-';
         const nama = row[3] ? String(row[3]) : '-';
         const dept = row[6] ? String(row[6]) : '-';
+        const alasan = row[12] ? String(row[12]) : '-'; // AMBIL DATA ALASAN
         
         let sisaHari = 30;
         let formattedDate = '-';
@@ -55,19 +57,24 @@ export function renderRecoveryTable(containerId, data) {
             : 'text-amber-700 bg-amber-50 border-amber-200 dark:text-amber-400 dark:bg-amber-900/30 dark:border-amber-500/40 shadow-sm';
 
         let directFotoLink = getAvatarLink(row[10] ? String(row[10]) : "");
-        let fotoSrc = directFotoLink ? directFotoLink : `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23f1f5f9'/><text x='50' y='50' font-family='monospace' font-size='40' font-weight='bold' fill='%2394a3b8' text-anchor='middle' dominant-baseline='central'>${nama !== '-' ? nama.charAt(0).toUpperCase() : '?'}</text></svg>`;
+        let FotoSrc = directFotoLink ? directFotoLink : `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23f1f5f9'/><text x='50' y='50' font-family='monospace' font-size='40' font-weight='bold' fill='%2394a3b8' text-anchor='middle' dominant-baseline='central'>${nama !== '-' ? nama.charAt(0).toUpperCase() : '?'}</text></svg>`;
 
         tableHTML += `
             <tr class="hover:bg-white/60 dark:hover:bg-amber-900/10 transition-colors group cursor-default">
                 <td class="p-4 pl-8 text-slate-500 font-bold">${formattedDate}</td>
                 <td class="p-4 flex justify-center">
                     <div class="w-10 h-10 rounded-xl overflow-hidden border border-white dark:border-slate-700 shadow-sm bg-slate-100 dark:bg-transparent opacity-70 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all dark:shadow-[0_0_10px_rgba(245,158,11,0.2)]">
-                        <img src="${fotoSrc}" class="w-full h-full object-cover">
+                        <img src="${FotoSrc}" class="w-full h-full object-cover">
                     </div>
                 </td>
                 <td class="p-4 font-black text-slate-900 dark:text-amber-400">${idKaryawan}</td>
                 <td class="p-4 tracking-wider text-slate-400 dark:text-slate-500 line-through decoration-rose-500 font-bold">${nama}</td>
                 <td class="p-4 text-slate-500 dark:text-amber-100/50">${dept}</td>
+                <td class="p-4 whitespace-normal min-w-[150px] max-w-[250px]">
+                    <span class="inline-block bg-rose-500/10 text-rose-600 dark:text-rose-400 px-2.5 py-1 rounded-lg border border-rose-500/20 text-[9px] font-bold leading-relaxed break-words shadow-inner">
+                        ${alasan}
+                    </span>
+                </td>
                 <td class="p-4 text-center">
                     <span class="inline-flex items-center px-3 py-1.5 rounded-lg border text-[9px] font-bold tracking-widest ${retensiColor}">
                         SISA ${sisaHari} HARI

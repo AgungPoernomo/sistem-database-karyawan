@@ -158,7 +158,7 @@ export function initPlottingModals(containerId, dependencies) {
 
     document.getElementById('uploadLayoutForm')?.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if(!base64Layout) { window.plottingApp.showToast('Matriks visual kosong. Masukkan file PNG/JPG.', 'error'); return; }
+        if(!base64Layout) { window.plottingApp.showToast('Matriks Foto kosong. Masukkan file PNG/JPG.', 'error'); return; }
         
         const btnSubmit = document.getElementById('btnSubmitLayout');
         const btnText = document.getElementById('btnText');

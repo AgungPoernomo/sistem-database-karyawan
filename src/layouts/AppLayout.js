@@ -89,19 +89,28 @@ export function renderSidebar(containerId, userId, adminRoleDept) {
         </style>
     `;
 
+    // STRUKTUR KANVAS UNTUK RESPONSIVITAS: 
+    // Di Mobile: Absolute/Fixed, geser ke kiri (-translate-x-full). 
+    // Di Desktop (lg): Relative, tampil (translate-x-0).
+    container.className = "fixed inset-y-0 left-0 z-50 w-[280px] lg:w-auto lg:static transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex-shrink-0";
+
     container.innerHTML = `
         ${web3Styles}
-        <aside class="w-[280px] m-6 mr-3 spatial-island rounded-[2.5rem] flex flex-col h-[calc(100vh-3rem)] transition-theme relative z-30">
+        <!-- Tombol Close Mobile (Berada di luar area sidebar agar bisa diklik saat menu terbuka) -->
+
+
+        <aside class="w-full lg:w-[280px] m-0 lg:m-6 lg:mr-3 h-full lg:h-[calc(100vh-3rem)] spatial-island lg:rounded-[2.5rem] flex flex-col transition-theme relative z-30 shadow-[5px_0_20px_rgba(0,0,0,0.1)] lg:shadow-none">
             <div class="dot-matrix"></div>
 
-            <div class="h-32 flex flex-col items-center justify-center px-6 relative z-10 mt-2">
+            <div class="h-32 flex flex-col items-center justify-center px-6 relative z-10 mt-6 lg:mt-2">
                 <div class="bg-white/60 dark:bg-slate-900/60 backdrop-blur-md px-6 py-3 rounded-[1.25rem] border border-white dark:border-cyan-500/30 shadow-[0_10px_25px_rgba(14,165,233,0.1)] transition-transform duration-500 hover:scale-105 group cursor-default relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-tr from-cyan-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <img src="/assets/logo-satoria.png" alt="Satoria Logo" class="h-9 w-auto object-contain filter drop-shadow-[0_2px_8px_rgba(14,165,233,0.3)] dark:drop-shadow-[0_2px_15px_rgba(14,165,233,0.6)] relative z-10">
+                    <!-- Path Icon untuk SVG bawaan / Gambar Logo -->
+                    <img src="/public/assets/logo-satoria.png" alt="Satoria Logo" class="h-9 w-auto object-contain filter drop-shadow-[0_2px_8px_rgba(14,165,233,0.3)] dark:drop-shadow-[0_2px_15px_rgba(14,165,233,0.6)] relative z-10" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%230ea5e9%22/></svg>'">
                 </div>
                 <div class="mt-5 flex items-center space-x-2">
                     <span class="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-ping"></span>
-                    <span class="text-[9px] font-mono text-cyan-600 dark:text-cyan-400 tracking-[0.3em] uppercase font-black">DATABASE SYSTEM</span>
+                    <span class="text-[9px] font-mono text-cyan-600 dark:text-cyan-400 tracking-[0.3em] uppercase font-black">Manajemen Data Karyawan</span>
                 </div>
             </div>
 
@@ -146,14 +155,14 @@ export function renderSidebar(containerId, userId, adminRoleDept) {
                 <button id="themeToggleBtn" class="w-full holo-nav flex items-center px-3 py-4 group outline-none">
                     <span class="holo-bracket left mr-2 text-indigo-500 dark:text-amber-400">[</span>
                     <svg id="themeIcon" class="w-5 h-5 mr-3 holo-icon group-hover:text-indigo-500 dark:group-hover:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
-                    <span id="themeText" class="holo-text uppercase flex-1 group-hover:text-indigo-600 dark:group-hover:text-amber-300">Tema Interface</span>
+                    <span id="themeText" class="holo-text uppercase flex-1 group-hover:text-indigo-600 dark:group-hover:text-amber-300 text-left">Tema Interface</span>
                     <span class="holo-bracket right ml-2 text-indigo-500 dark:text-amber-400">]</span>
                 </button>
             </nav>
 
-            <div class="p-5 relative z-10">
+            <div class="p-5 relative z-10 mt-auto">
                 <div class="hardware-node p-4 flex items-center group cursor-default">
-                    <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-900 border border-cyan-200 dark:border-cyan-500/50 flex items-center justify-center text-cyan-600 dark:text-cyan-400 font-black text-xl mr-4 shadow-[0_5px_15px_rgba(14,165,233,0.15)] relative overflow-hidden transition-colors">
+                    <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-900 border border-cyan-200 dark:border-cyan-500/50 flex items-center justify-center text-cyan-600 dark:text-cyan-400 font-black text-xl mr-4 shadow-[0_5px_15px_rgba(14,165,233,0.15)] relative overflow-hidden transition-colors flex-shrink-0">
                         <div class="absolute inset-0 bg-cyan-400/20 animate-pulse"></div>
                         <span class="relative z-10">${avatarLetter}</span>
                     </div>
@@ -168,38 +177,73 @@ export function renderSidebar(containerId, userId, adminRoleDept) {
                             <span class="text-[8px] text-emerald-600 dark:text-emerald-400 uppercase tracking-[0.2em] font-bold">Terhubung</span>
                         </div>
                     </div>
-                    <button id="logoutBtn" class="p-3 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/20 rounded-[10px] transition-all border border-transparent hover:border-rose-200 dark:hover:border-rose-500/30" title="Putuskan Koneksi Node">
+                    <button id="logoutBtnSide" class="p-3 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/20 rounded-[10px] transition-all border border-transparent hover:border-rose-200 dark:hover:border-rose-500/30 flex-shrink-0" title="Putuskan Koneksi Node">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                     </button>
                 </div>
             </div>
         </aside>
     `;
+
+    // Overlay Hitam Transparan untuk Mobile
+    let overlay = document.getElementById('mobileMenuOverlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'mobileMenuOverlay';
+        overlay.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden lg:hidden opacity-0 transition-opacity duration-300';
+        document.body.appendChild(overlay);
+    }
+
+    // Fungsi Toggle Hamburger Menu
+    const closeBtn = document.getElementById('closeMobileMenuBtn');
+    window.toggleMobileMenu = function() {
+        const isClosed = container.classList.contains('-translate-x-full');
+        if (isClosed) {
+            container.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+            if(closeBtn) closeBtn.classList.remove('hidden');
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0');
+                if(closeBtn) closeBtn.classList.remove('opacity-0');
+            }, 10);
+        } else {
+            container.classList.add('-translate-x-full');
+            overlay.classList.add('opacity-0');
+            if(closeBtn) closeBtn.classList.add('opacity-0');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                if(closeBtn) closeBtn.classList.add('hidden');
+            }, 300);
+        }
+    };
+
+    if (closeBtn) closeBtn.addEventListener('click', window.toggleMobileMenu);
+    overlay.addEventListener('click', window.toggleMobileMenu);
 }
 
 export function renderHeader(containerId) {
     const container = document.getElementById(containerId);
+    
+    // Sesuaikan padding container di mobile
+    container.className = "mx-4 lg:mx-6 mt-4 lg:mt-6 mb-2 spatial-island rounded-[1.5rem] lg:rounded-[2rem] h-20 lg:h-24 flex-shrink-0 flex items-center justify-between px-5 lg:px-10 z-20 relative transition-theme";
+
     container.innerHTML = `
-        <header class="mx-6 mt-6 mb-2 spatial-island rounded-[2rem] h-24 flex-shrink-0 flex items-center justify-between px-10 z-20 relative transition-theme">
-            <div class="flex items-center">
-                <div class="relative w-12 h-12 mr-6 flex items-center justify-center">
-                    <div class="absolute inset-0 bg-cyan-400 rounded-full blur-[10px] opacity-50 animate-pulse"></div>
-                    <div class="relative w-6 h-6 bg-gradient-to-br from-white to-cyan-200 dark:from-cyan-400 dark:to-blue-600 rounded-full border-2 border-white dark:border-cyan-200 shadow-[0_0_15px_rgba(14,165,233,0.8)]"></div>
-                </div>
-                <div>
-                    <h2 class="text-[1.35rem] font-black text-slate-800 dark:text-white tracking-[0.15em] uppercase transition-colors font-mono drop-shadow-sm">Executive Command Center</h2>
-                    <p class="text-[10px] font-bold font-mono text-cyan-600 dark:text-cyan-400 mt-1 uppercase tracking-[0.25em] transition-colors">Platform Tata Kelola Data Terdesentralisasi</p>
-                </div>
-            </div>
+        <div class="flex items-center space-x-3 md:space-x-4">
+            <!-- HAMBURGER MENU BUTTON -->
+            <button onclick="window.toggleMobileMenu()" class="lg:hidden flex items-center justify-center p-2.5 rounded-xl bg-white/40 dark:bg-slate-900/40 border border-white/50 dark:border-slate-700/50 text-slate-700 dark:text-cyan-400 shadow-sm backdrop-blur-md transition-colors hover:bg-white/60 dark:hover:bg-slate-800">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
             
-            <div class="hidden lg:flex items-center space-x-3 text-[10px] font-mono font-bold text-cyan-700 dark:text-cyan-300 uppercase tracking-widest bg-white/50 dark:bg-slate-900/50 px-6 py-3 rounded-2xl border border-white dark:border-cyan-500/30 shadow-sm dark:shadow-[inset_0_0_15px_rgba(14,165,233,0.1)] transition-colors backdrop-blur-md">
-                <div class="flex space-x-1 mr-1">
-                    <span class="w-1.5 h-1.5 bg-cyan-500 dark:bg-cyan-400 rounded-full animate-bounce"></span>
-                    <span class="w-1.5 h-1.5 bg-cyan-500 dark:bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 100ms"></span>
-                </div>
-                <span>Enkripsi: AES-256 Valid</span>
+            <div class="hidden lg:flex relative w-12 h-12 mr-6 items-center justify-center">
+                <div class="absolute inset-0 bg-cyan-400 rounded-full blur-[10px] opacity-50 animate-pulse"></div>
+                <div class="relative w-6 h-6 bg-gradient-to-br from-white to-cyan-200 dark:from-cyan-400 dark:to-blue-600 rounded-full border-2 border-white dark:border-cyan-200 shadow-[0_0_15px_rgba(14,165,233,0.8)]"></div>
             </div>
-        </header>
+            <div>
+                <h2 class="text-sm md:text-[1.35rem] font-black text-slate-800 dark:text-white md:tracking-[0.15em] tracking-widest uppercase transition-colors font-mono drop-shadow-sm">Command Center</h2>
+                <p class="text-[8px] md:text-[10px] font-bold font-mono text-cyan-600 dark:text-cyan-400 mt-1 uppercase md:tracking-[0.25em] tracking-wider transition-colors truncate max-w-[150px] md:max-w-none">Tata Kelola Data</p>
+            </div>
+        </div>
+        
     `;
 }
 
@@ -224,10 +268,7 @@ export function initThemeAndLogout() {
     updateThemeUI(currentTheme);
 
     themeToggleBtn?.addEventListener('click', () => {
-        // 1. Tambahkan class untuk mematikan transisi secara global
         htmlElement.classList.add('no-transitions');
-
-        // 2. Logika pergantian tema
         currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
         localStorage.setItem('satoria_theme', currentTheme);
         
@@ -238,21 +279,17 @@ export function initThemeAndLogout() {
         }
         
         updateThemeUI(currentTheme);
-
-        // 3. Paksa browser untuk menerapkan perubahan tanpa animasi (Force Reflow)
-        // Ini trik teknis agar perubahan warna terjadi di frame yang sama
         window.getComputedStyle(htmlElement).opacity;
-
-        // 4. Lepaskan kembali class anti-transisi agar UI tetap interaktif
-        setTimeout(() => {
-            htmlElement.classList.remove('no-transitions');
-        }, 0);
+        setTimeout(() => { htmlElement.classList.remove('no-transitions'); }, 0);
     });
 
-    document.getElementById('logoutBtn')?.addEventListener('click', () => {
+    const triggerLogout = () => {
         if(confirm("Apakah Anda yakin ingin memutus koneksi dari Node Organisasi Satoria?")) {
             sessionStorage.clear(); localStorage.clear();
             window.location.replace('/');
         }
-    });
+    };
+
+    // Binding logout untuk elemen Sidebar (desktop & mobile)
+    document.getElementById('logoutBtnSide')?.addEventListener('click', triggerLogout);
 }

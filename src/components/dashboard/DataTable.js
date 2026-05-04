@@ -3,7 +3,8 @@
 function getAvatarLink(gdriveUrl) {
     if (!gdriveUrl || gdriveUrl === "-" || gdriveUrl.includes("Upload_Error")) return null;
     const match = gdriveUrl.match(/\/d\/([a-zA-Z0-9-_]+)/); 
-    if (match && match[1]) return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w400`;
+    // Menggunakan endpoint 'uc' untuk akses view gambar langsung secara native
+    if (match && match[1]) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
     return null;
 }
 
@@ -17,10 +18,10 @@ export function renderDataTable(containerId, data) {
     let tableHTML = `
         <div class="px-8 py-5 border-b border-white/50 dark:border-slate-800/80 flex justify-between items-center bg-white/40 dark:bg-slate-900/40 backdrop-blur-md z-10 shadow-sm">
             <h3 class="text-sm font-bold text-slate-800 dark:text-white uppercase tracking-[0.2em] flex items-center font-mono">
-                <span class="w-2 h-8 bg-cyan-500 rounded-full mr-4 shadow-[0_0_10px_#0ea5e9]"></span> Node Direktori
+                <span class="w-2 h-8 bg-cyan-500 rounded-full mr-4 shadow-[0_0_10px_#0ea5e9]"></span> Data Karyawan
             </h3>
             <div class="flex items-center space-x-3 bg-white/60 dark:bg-slate-950/60 px-4 py-1.5 rounded-xl border border-white/80 dark:border-cyan-500/20 shadow-inner">
-                <span class="text-[9px] text-slate-500 uppercase font-bold tracking-widest font-mono">Total Node Terenkripsi</span>
+                <span class="text-[9px] text-slate-500 uppercase font-bold tracking-widest font-mono">Total Karyawan</span>
                 <span class="text-xs text-cyan-600 dark:text-cyan-400 font-black font-mono ml-2">${data.length}</span>
             </div>
         </div>
@@ -30,12 +31,12 @@ export function renderDataTable(containerId, data) {
                 <thead class="sticky top-0 bg-white/90 dark:bg-[#030712]/90 backdrop-blur-xl z-10 border-b border-slate-200/50 dark:border-cyan-500/20 shadow-sm">
                     <tr class="text-[10px] uppercase tracking-[0.2em] text-slate-500 dark:text-cyan-500/80 font-mono font-bold">
                         <th class="p-4 pl-8">No</th>
-                        <th class="p-4 text-center">Visual</th>
-                        <th class="p-4">ID Node</th>
-                        <th class="p-4">Identitas Asli</th>
-                        <th class="p-4">Plant / Lokasi</th>
+                        <th class="p-4 text-center">Foto</th>
+                        <th class="p-4">NIK</th>
+                        <th class="p-4">Nama Karyawan</th>
+                        <th class="p-4">Plant</th>
                         <th class="p-4">Departemen</th>
-                        <th class="p-4">Area / Zone</th>
+                        <th class="p-4">Area & Zone</th>
                         <th class="p-4 text-center">Grup</th>
                         <th class="p-4 text-center">Status</th>
                         <th class="p-4 text-right pr-8">Sinkronisasi Terakhir</th>
@@ -64,14 +65,18 @@ export function renderDataTable(containerId, data) {
 
         let urlDrive = row[9] ? String(row[9]) : ""; 
         let directFotoLink = getAvatarLink(urlDrive);
-        let fotoSrc = directFotoLink ? directFotoLink : `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23f8fafc'/><text x='50' y='50' font-family='monospace' font-size='45' font-weight='bold' fill='%2394a3b8' text-anchor='middle' dominant-baseline='central'>${nama !== '-' ? nama.charAt(0).toUpperCase() : '?'}</text></svg>`;
+        
+        // Render gambar langsung. Jika kosong dari database, gunakan ikon profil default bawaan
+        let fotoElement = directFotoLink 
+            ? `<img src="${directFotoLink}" alt="Foto" class="w-full h-full object-cover">`
+            : `<div class="w-full h-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center"><svg class="w-5 h-5 text-slate-400 dark:text-slate-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>`;
 
         tableHTML += `
             <tr class="hover:bg-white/60 dark:hover:bg-cyan-900/10 transition-colors cursor-default group">
                 <td class="p-4 pl-8 text-slate-400 font-bold">${no}</td>
                 <td class="p-4 flex justify-center">
                     <div class="w-10 h-10 rounded-xl overflow-hidden border border-white dark:border-slate-700 shadow-sm bg-slate-100 dark:bg-transparent">
-                        <img src="${fotoSrc}" alt="Foto" class="w-full h-full object-cover">
+                        ${fotoElement}
                     </div>
                 </td>
                 <td class="p-4 font-black text-slate-900 dark:text-cyan-400">${idKaryawan}</td>

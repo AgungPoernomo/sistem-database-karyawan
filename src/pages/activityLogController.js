@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     if(headerTitle) headerTitle.innerText = "SYSTEM AUDIT LOG";
     if(headerSub) {
-        headerSub.innerText = "Transmisi Forensik & Jejak Aktivitas Otorisator";
+        headerSub.innerText = "Jejak Aktivitas Otorisator";
         headerSub.classList.replace('text-cyan-600', 'text-indigo-600');
         headerSub.classList.replace('dark:text-cyan-400', 'dark:text-indigo-400');
     }

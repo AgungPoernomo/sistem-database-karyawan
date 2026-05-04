@@ -22,12 +22,12 @@ export function renderDataTable(containerId, data) {
                 <thead class="sticky top-0 bg-white/90 dark:bg-[#030712]/90 backdrop-blur-xl z-10 border-b border-slate-200/50 dark:border-cyan-500/20 shadow-sm">
                     <tr class="text-[10px] uppercase tracking-[0.2em] text-slate-500 dark:text-cyan-500/80 font-mono font-bold">
                         <th class="p-4 pl-8">No</th>
-                        <th class="p-4 text-center">Visual</th>
-                        <th class="p-4">ID Node</th>
-                        <th class="p-4">Identitas Asli</th>
+                        <th class="p-4 text-center">Foto</th>
+                        <th class="p-4">NIK</th>
+                        <th class="p-4">Nama Karyawan</th>
                         <th class="p-4 text-center">Gender</th>
-                        <th class="p-4">Plant / Lokasi</th>
-                        <th class="p-4">Area / Zone</th>
+                        <th class="p-4">Plant</th>
+                        <th class="p-4">Area & Zone</th>
                         <th class="p-4 text-center">Grup</th>
                         <th class="p-4 text-center">Status</th>
                         <th class="p-4 text-right pr-8">Aksi</th>
@@ -49,14 +49,14 @@ export function renderDataTable(containerId, data) {
         const zone = row[8] ? String(row[8]) : '-';
         
         let directFotoLink = getAvatarLink(row[9] ? String(row[9]) : "");
-        let fotoSrc = directFotoLink ? directFotoLink : `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23f1f5f9'/><text x='50' y='50' font-family='monospace' font-size='45' font-weight='bold' fill='%2394a3b8' text-anchor='middle' dominant-baseline='central'>${nama !== '-' ? nama.charAt(0).toUpperCase() : '?'}</text></svg>`;
+        let FotoSrc = directFotoLink ? directFotoLink : `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23f1f5f9'/><text x='50' y='50' font-family='monospace' font-size='45' font-weight='bold' fill='%2394a3b8' text-anchor='middle' dominant-baseline='central'>${nama !== '-' ? nama.charAt(0).toUpperCase() : '?'}</text></svg>`;
 
         tableHTML += `
             <tr class="hover:bg-white/60 dark:hover:bg-cyan-900/10 transition-colors group cursor-default">
                 <td class="p-4 pl-8 text-slate-400 font-bold">${no}</td>
                 <td class="p-4 flex justify-center">
                     <div class="w-10 h-10 rounded-xl overflow-hidden border border-white dark:border-slate-700 shadow-sm bg-slate-100 dark:bg-transparent">
-                        <img src="${fotoSrc}" alt="Foto" class="w-full h-full object-cover">
+                        <img src="${FotoSrc}" alt="Foto" class="w-full h-full object-cover">
                     </div>
                 </td>
                 <td class="p-4 font-black text-slate-900 dark:text-cyan-400">${idKaryawan}</td>

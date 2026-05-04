@@ -96,10 +96,14 @@
         
         <div id="app-header"></div>
 
-        <div class="flex-1 overflow-y-auto px-6 pb-6 pt-2 custom-scrollbar flex flex-col gap-6">
-            <div id="topModulesContainer" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
-            <div id="widgetContainer" class="mb-2"></div>
-            <div id="tableContainer" class="spatial-island rounded-[2.5rem] flex flex-col min-h-[600px] h-auto overflow-hidden z-20 relative mb-8"></div>
+        <div class="flex-1 overflow-y-auto px-3 md:px-6 pb-4 md:pb-6 pt-2 custom-scrollbar flex flex-col gap-4 md:gap-6">
+            <!-- Grid otomatis jadi 1 kolom di HP, 3 kolom di Laptop -->
+            <div id="topModulesContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6"></div>
+            
+            <div id="widgetContainer" class="mb-1 md:mb-2"></div>
+            
+            <!-- Tabel dibuat responsif dengan overflow-x-auto -->
+            <div id="tableContainer" class="spatial-island rounded-3xl md:rounded-[2.5rem] flex flex-col min-h-[500px] md:min-h-[600px] h-auto overflow-hidden z-20 relative mb-8"></div>
         </div>
     </main>
 
@@ -107,7 +111,6 @@
 
     <script type="module" src="/src/pages/dashboardController.js"></script>
     <script>
-        // Membuka 'tirai' layar secara mulus setelah JS dan CSS selesai merakit UI
         window.addEventListener('load', () => {
             setTimeout(() => { 
                 document.getElementById('app-body').classList.remove('opacity-0'); 

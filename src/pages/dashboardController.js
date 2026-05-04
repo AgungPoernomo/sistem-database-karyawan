@@ -1,7 +1,6 @@
 // src/pages/dashboardController.js
 
 import { renderSidebar, renderHeader, initThemeAndLogout } from '../layouts/AppLayout.js';
-// PERHATIKAN: Kita memanggil 4 modul baru di bawah ini, bukan lagi DashboardMetrics.js
 import { renderTopModules } from '../components/dashboard/TopModules.js';
 import { renderStatsCards } from '../components/dashboard/StatsCards.js';
 import { renderDataTable } from '../components/dashboard/DataTable.js';
@@ -37,14 +36,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     tableContainer.innerHTML = `<div class="flex-1 flex flex-col items-center justify-center text-cyan-600 dark:text-cyan-400 font-mono text-xs font-bold tracking-[0.2em] uppercase animate-pulse"><span class="w-8 h-8 border-t-2 border-cyan-500 rounded-full animate-spin mb-4 shadow-[0_0_10px_#0ea5e9]"></span>Sinkronisasi Data...</div>`;
 
     try {
-        const allData = await EmployeeService.getAllEmployees();
-        let processedData = [];
-
-        if (isSuperAdmin) {
-            processedData = allData;
-        } else if (adminRoleDept) {
-            processedData = allData.filter(row => String(row[5] || '').toUpperCase().includes(adminRoleDept));
-        }
+        // Data yang diterima di sini SUDAH BERSIH DAN DIFILTER oleh Backend
+        const processedData = await EmployeeService.getAllEmployees();
         
         // Panggil pabrik-pabrik modul kecil
         initModalEngine('app-modal', processedData);

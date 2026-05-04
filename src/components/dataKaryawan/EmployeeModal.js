@@ -12,7 +12,6 @@ export function initEmployeeModals(containerId, dependencies) {
     const { savedUserId, onSuccess } = dependencies;
     const container = document.getElementById(containerId);
 
-    // HTML Modal yang sudah dirampingkan (max-w-2xl, gap-4, p-6)
     container.innerHTML = `
         <div id="formModal" class="fixed inset-0 z-[60] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-400">
             <div id="modalOverlay" class="absolute inset-0 bg-slate-900/60 backdrop-blur-xl cursor-pointer"></div>
@@ -20,7 +19,7 @@ export function initEmployeeModals(containerId, dependencies) {
                 
                 <div class="flex justify-between items-center mb-6 border-b border-slate-200/50 dark:border-slate-700/50 pb-4">
                     <h3 id="modalTitle" class="text-base font-black text-slate-900 dark:text-white uppercase tracking-widest flex items-center font-mono drop-shadow-sm">
-                        <span class="w-2 h-6 bg-cyan-500 rounded-full mr-3 shadow-[0_0_10px_#0ea5e9]"></span> Registrasi Node Personil
+                        <span class="w-2 h-6 bg-cyan-500 rounded-full mr-3 shadow-[0_0_10px_#0ea5e9]"></span> Tambah Data Karyawan
                     </h3>
                     <button id="closeModalBtn" class="text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-all p-2 rounded-xl">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -67,7 +66,7 @@ export function initEmployeeModals(containerId, dependencies) {
                     </div>
 
                     <div class="space-y-1.5 mt-5 border-t border-slate-200/50 dark:border-slate-700/50 pt-5">
-                        <label class="text-[9px] font-bold text-slate-500 dark:text-cyan-400/80 uppercase tracking-widest pl-2 font-mono">Unggah Identitas Visual (Maks 2MB)</label>
+                        <label class="text-[9px] font-bold text-slate-500 dark:text-cyan-400/80 uppercase tracking-widest pl-2 font-mono">Unggah Identitas Foto (Maks 2MB)</label>
                         <div class="flex items-center space-x-5">
                             <div class="w-20 h-20 rounded-2xl overflow-hidden glass-input flex-shrink-0 relative group shadow-sm flex items-center justify-center">
                                 <img id="previewFoto" src="" alt="Preview" class="w-full h-full object-cover hidden">
@@ -80,7 +79,7 @@ export function initEmployeeModals(containerId, dependencies) {
                             <div class="relative flex-1">
                                 <label for="formFoto" class="flex flex-col items-center justify-center w-full h-20 border-2 border-dashed border-cyan-500/30 rounded-2xl cursor-pointer bg-cyan-50/50 dark:bg-cyan-900/10 hover:bg-cyan-100 dark:hover:bg-cyan-900/30 hover:border-cyan-400 transition-all group shadow-inner">
                                     <svg class="w-5 h-5 text-cyan-500/60 mb-1 group-hover:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                                    <p class="text-[9px] text-cyan-700 dark:text-cyan-300 font-mono tracking-widest uppercase font-bold">Otorisasi File Visual</p>
+                                    <p class="text-[9px] text-cyan-700 dark:text-cyan-300 font-mono tracking-widest uppercase font-bold">Otorisasi File Foto</p>
                                     <input id="formFoto" type="file" class="hidden" accept="image/png, image/jpeg, image/jpg" />
                                 </label>
                             </div>
@@ -106,7 +105,14 @@ export function initEmployeeModals(containerId, dependencies) {
                     <svg class="w-10 h-10 text-rose-500 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                 </div>
                 <h3 class="text-lg font-black text-slate-900 dark:text-white mb-2 uppercase tracking-widest font-mono">Cabut Otorisasi?</h3>
-                <p class="text-[10px] font-mono text-slate-600 dark:text-slate-400 mb-8 leading-relaxed font-bold">Personil <span id="deleteTargetId" class="text-rose-600 dark:text-rose-400 font-black tracking-wider block mt-1 mb-1 text-xs"></span>akan diisolasi ke sistem <span class="text-amber-500 font-black">Data Recovery Vault</span>.</p>
+                <p class="text-[10px] font-mono text-slate-600 dark:text-slate-400 mb-4 leading-relaxed font-bold">Personil <span id="deleteTargetId" class="text-rose-600 dark:text-rose-400 font-black tracking-wider block mt-1 mb-1 text-xs"></span>akan diisolasi ke sistem Data Recovery Vault.</p>
+                
+                <!-- INPUT ALASAN PENGHAPUSAN -->
+                <div class="mb-6 text-left">
+                    <label class="text-[9px] font-bold text-slate-500 dark:text-cyan-400/80 uppercase tracking-widest pl-2 font-mono">Alasan Pencabutan Akses</label>
+                    <textarea id="deleteReason" rows="2" class="w-full px-4 py-3 mt-1 rounded-xl font-mono text-xs font-bold glass-input resize-none" placeholder="Masukkan alasan..." required></textarea>
+                </div>
+
                 <div class="flex justify-center space-x-3">
                     <button id="cancelDeleteBtn" class="px-5 py-2.5 text-slate-500 font-mono text-[10px] font-bold uppercase tracking-widest hover:text-slate-800 dark:hover:text-white transition-colors rounded-xl">Batal</button>
                     <button id="confirmDeleteBtn" class="bg-rose-600 hover:bg-rose-500 text-white px-6 py-3 rounded-xl text-[11px] font-black font-mono uppercase tracking-widest shadow-[0_5px_15px_rgba(244,63,94,0.4)] transition-all flex items-center hover:-translate-y-1">
@@ -128,7 +134,7 @@ export function initEmployeeModals(containerId, dependencies) {
     const deleteModal = document.getElementById('deleteConfirmModal');
     const deleteModalContent = document.getElementById('deleteModalContent');
 
-    // FUNGSI POPULASI DROPDOWN (Dipanggil oleh Controller)
+    // FUNGSI POPULASI DROPDOWN
     window.dataKaryawanApp.populateDropdowns = function(masterOptions) {
         const fill = (id, data) => {
             const el = document.getElementById(id);
@@ -148,7 +154,7 @@ export function initEmployeeModals(containerId, dependencies) {
     window.dataKaryawanApp.openModal = function(mode, data = null) {
         document.getElementById('formMode').value = mode;
         document.getElementById('formRowNo').value = (mode === 'UPDATE' && data) ? data[0] : '';
-        document.getElementById('modalTitle').innerHTML = mode === 'CREATE' ? `<span class="w-2 h-6 bg-cyan-500 rounded-full mr-3 shadow-[0_0_10px_#0ea5e9]"></span> Registrasi Node Personil` : `<span class="w-2 h-6 bg-amber-500 rounded-full mr-3 shadow-[0_0_10px_#f59e0b]"></span> Modifikasi Node Personil`;
+        document.getElementById('modalTitle').innerHTML = mode === 'CREATE' ? `<span class="w-2 h-6 bg-cyan-500 rounded-full mr-3 shadow-[0_0_10px_#0ea5e9]"></span> Tambah Data Karyawan` : `<span class="w-2 h-6 bg-amber-500 rounded-full mr-3 shadow-[0_0_10px_#f59e0b]"></span> Modifikasi Node Personil`;
         
         const previewFoto = document.getElementById('previewFoto');
         const previewInitials = document.getElementById('previewInitials');
@@ -197,16 +203,16 @@ export function initEmployeeModals(containerId, dependencies) {
     document.getElementById('cancelBtn')?.addEventListener('click', closeFormModal);
     document.getElementById('modalOverlay')?.addEventListener('click', closeFormModal);
 
-    // LOGIKA UPLOAD FOTO
-    const fotoInput = document.getElementById('formFoto');
+    // LOGIKA UPLOAD Foto
+    const FotoInput = document.getElementById('formFoto');
     const fileNameDisplay = document.getElementById('fileNameDisplay');
     const uploadLoader = document.getElementById('uploadLoader'); 
     
-    if(fotoInput) {
-        fotoInput.addEventListener('change', function(e) {
+    if(FotoInput) {
+        FotoInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if(file) {
-                if (file.size > 2097152) { window.dataKaryawanApp.showToast("Ukuran memori maksimal 2 MB.", "error"); fotoInput.value = ""; return; }
+                if (file.size > 2097152) { window.dataKaryawanApp.showToast("Ukuran memori maksimal 2 MB.", "error"); FotoInput.value = ""; return; }
                 uploadLoader.classList.replace('hidden', 'flex');
                 document.getElementById('submitFormBtn').disabled = true; 
                 fileNameDisplay.innerText = `Memproses Paket...`;
@@ -257,7 +263,7 @@ export function initEmployeeModals(containerId, dependencies) {
                 area: document.getElementById('formDataArea').value || "-",
                 group: document.getElementById('formDataGroup').value || "-",
                 zone: document.getElementById('formDataZone').value || "-",
-                fotoBase64: base64FotoData, fotoName: namaFileFoto      
+                FotoBase64: base64FotoData, FotoName: namaFileFoto      
             };
 
             try {
@@ -277,10 +283,11 @@ export function initEmployeeModals(containerId, dependencies) {
         });
     }
 
-    // FUNGSI MODAL DELETE
+    // FUNGSI MODAL DELETE & PENGIRIMAN ALASAN
     window.dataKaryawanApp.openDeleteModal = function(rowNo, nama) {
         pendingDeleteRow = rowNo;
         document.getElementById('deleteTargetId').innerText = nama;
+        document.getElementById('deleteReason').value = ''; // Reset alasan setiap modal dibuka
         deleteModal.classList.remove('hidden'); deleteModal.classList.add('flex');
         setTimeout(() => { deleteModal.classList.remove('opacity-0'); deleteModalContent.classList.remove('scale-95'); }, 10);
     };
@@ -295,14 +302,24 @@ export function initEmployeeModals(containerId, dependencies) {
 
     document.getElementById('confirmDeleteBtn')?.addEventListener('click', async () => {
         if(!pendingDeleteRow) return;
+
+        const alasanInput = document.getElementById('deleteReason').value.trim();
+        if (!alasanInput) {
+            window.dataKaryawanApp.showToast("Alasan pencabutan akses wajib diisi!", "error");
+            return;
+        }
+
         const btn = document.getElementById('confirmDeleteBtn');
         const originalHtml = btn.innerHTML;
         btn.innerHTML = `<span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span> Mencabut...`;
         btn.disabled = true;
 
         try {
-            const res = await fetch(APP_CONFIG.GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'DELETE', payload: { userId: savedUserId, rowNo: pendingDeleteRow } }) });
+            // SISIPKAN ALASAN KE DALAM PAYLOAD
+            const payloadData = { userId: savedUserId, rowNo: pendingDeleteRow, alasan: alasanInput };
+            const res = await fetch(APP_CONFIG.GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'DELETE', payload: payloadData }) });
             const resJson = await res.json();
+            
             if(resJson.status === 'success') {
                 closeDeleteModal(); window.dataKaryawanApp.showToast(`Otorisasi Node Berhasil Dicabut.`, 'success'); onSuccess(); 
             } else throw new Error(resJson.message);

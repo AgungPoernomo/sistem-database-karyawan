@@ -42,7 +42,7 @@ export function renderTopModules(containerId, adminRoleDept) {
             
             <div class="relative z-10 mt-auto">
                 <h3 class="font-black text-slate-800 dark:text-white uppercase tracking-[0.1em] text-base truncate font-mono drop-shadow-sm">Plotting Area</h3>
-                <p class="text-[10px] text-slate-500 dark:text-emerald-300/80 font-mono uppercase tracking-[0.2em] font-bold mt-1">Visualisasi Spasial 2D</p>
+                <p class="text-[10px] text-slate-500 dark:text-emerald-300/80 font-mono uppercase tracking-[0.2em] font-bold mt-1">Fotoisasi Spasial 2D</p>
             </div>
         </button>
 
