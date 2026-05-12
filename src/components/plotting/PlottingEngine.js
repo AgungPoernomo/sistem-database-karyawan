@@ -40,7 +40,7 @@ export function updatePlottingStats(lineData, areaData) {
                     <span class="text-slate-500 font-bold">NODE WANITA AKTIF</span> <span class="text-pink-500 dark:text-pink-400 font-black text-sm">${wanita}</span>
                 </div>
                 <div class="flex justify-between items-center bg-cyan-50/80 dark:bg-cyan-900/30 border border-cyan-200 dark:border-cyan-500/40 px-4 py-3.5 rounded-2xl shadow-inner mt-2">
-                    <span class="text-cyan-800 dark:text-cyan-300 font-black">TOTAL KAPASITAS NODE</span> <span class="text-cyan-600 dark:text-white font-black text-xl drop-shadow-[0_0_5px_rgba(14,165,233,0.5)]">${lineData.length}</span>
+                    <span class="text-cyan-800 dark:text-cyan-300 font-black">TOTAL</span> <span class="text-cyan-600 dark:text-white font-black text-xl drop-shadow-[0_0_5px_rgba(14,165,233,0.5)]">${lineData.length}</span>
                 </div>
             </div>
 

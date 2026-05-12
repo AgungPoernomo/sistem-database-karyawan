@@ -3,7 +3,8 @@
 function getAvatarLink(gdriveUrl) {
     if (!gdriveUrl || gdriveUrl === "-" || gdriveUrl.includes("Upload_Error")) return null;
     const match = gdriveUrl.match(/\/d\/([a-zA-Z0-9-_]+)/); 
-    if (match && match[1]) return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w400`;
+    // Menggunakan UC endpoint native
+    if (match && match[1]) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
     return null;
 }
 
@@ -38,7 +39,7 @@ export function updateMachineStats(lineData, areaData) {
                     <span class="text-slate-500 font-bold">NODE WANITA AKTIF</span> <span class="text-pink-500 dark:text-pink-400 font-black text-sm">${wanita}</span>
                 </div>
                 <div class="flex justify-between items-center bg-cyan-50/80 dark:bg-cyan-900/30 border border-cyan-200 dark:border-cyan-500/40 px-4 py-3.5 rounded-2xl shadow-inner mt-2">
-                    <span class="text-cyan-800 dark:text-cyan-300 font-black">TOTAL KAPASITAS NODE</span> <span class="text-cyan-600 dark:text-white font-black text-xl drop-shadow-[0_0_5px_rgba(14,165,233,0.5)]">${lineData.length}</span>
+                    <span class="text-cyan-800 dark:text-cyan-300 font-black">TOTAL</span> <span class="text-cyan-600 dark:text-white font-black text-xl drop-shadow-[0_0_5px_rgba(14,165,233,0.5)]">${lineData.length}</span>
                 </div>
             </div>
             <div class="space-y-3 mt-4">
@@ -98,12 +99,15 @@ export function renderMachineTable(data) {
             kodePloting = `${kLine}/${kDept}/${kID}/${kArea}`;
         }
 
+        // FOTO HANDLING
         let directFotoLink = getAvatarLink(row[9] ? String(row[9]) : "");
-        let FotoSrc = directFotoLink ? directFotoLink : `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23f1f5f9'/><text x='50' y='50' font-family='monospace' font-size='40' font-weight='bold' fill='%2394a3b8' text-anchor='middle' dominant-baseline='central'>${nama !== '-' ? nama.charAt(0).toUpperCase() : '?'}</text></svg>`;
+        let fotoElement = directFotoLink 
+            ? `<img src="${directFotoLink}" alt="Foto" class="w-full h-full object-cover">`
+            : `<div class="w-full h-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center"><svg class="w-5 h-5 text-slate-400 dark:text-slate-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>`;
 
         tbodyHTML += `
             <tr class="hover:bg-white/60 dark:hover:bg-emerald-900/10 transition-colors group cursor-default">
-                <td class="p-3 pl-6 flex justify-center"><div class="w-10 h-10 rounded-xl overflow-hidden border border-white dark:border-slate-700 shadow-sm bg-slate-100 dark:bg-transparent"><img src="${FotoSrc}" class="w-full h-full object-cover"></div></td>
+                <td class="p-3 pl-6 flex justify-center"><div class="w-10 h-10 rounded-xl overflow-hidden border border-white dark:border-slate-700 shadow-sm bg-slate-100 dark:bg-transparent">${fotoElement}</div></td>
                 <td class="p-3 font-black text-slate-900 dark:text-emerald-400 text-xs">${id}</td>
                 <td class="p-3 text-slate-800 dark:text-white font-bold truncate max-w-[150px]"><span class="text-xs">${nama}</span><br><span class="text-[9px] text-slate-400 tracking-wider">${dept}</span></td>
                 <td class="p-3 text-center text-slate-600 dark:text-emerald-100 font-bold">${grp}</td>

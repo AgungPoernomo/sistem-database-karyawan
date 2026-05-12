@@ -1,7 +1,7 @@
 // src/pages/recoveryController.js
 
 import { APP_CONFIG } from '../config/api.js';
-import { renderSidebar, renderHeader, initThemeAndLogout } from '../layouts/AppLayout.js';
+import { initLayout, initThemeAndLogout } from '../layouts/AppLayout.js';
 import { initRecoveryModals } from '../components/recovery/RecoveryModals.js';
 import { renderRecoveryTable } from '../components/recovery/RecoveryTable.js';
 
@@ -20,8 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // 2. RENDER KERANGKA SPASIAL
-    renderSidebar('app-sidebar', savedUserId, adminRoleDept);
-    renderHeader('app-header');
+    initLayout(savedUserId, adminRoleDept);
     initThemeAndLogout();
 
     const headerTitle = document.querySelector('#app-header h2');

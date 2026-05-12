@@ -1,12 +1,9 @@
 // src/pages/plottingarea/mainPlottingOrchestrator.js
 
 import { APP_CONFIG } from '../../config/api.js';
-// KUNCI YANG HILANG: KITA KEMBALIKAN FUNGSI RENDER DARI APPLAYOUT
-import { renderSidebar, renderHeader, initThemeAndLogout } from '../../layouts/AppLayout.js'; 
+import { initLayout, initThemeAndLogout } from '../../layouts/AppLayout.js';
 import { initPlottingModals } from '../../components/plotting/PlottingModals.js';
 import { renderMachineView } from './plottingMachineController.js';
-import { renderRoomView } from './plottingRoomController.js';
-import { renderOutdoorView } from './plottingOutdoorController.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     
@@ -22,16 +19,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         adminRoleDept = uppercaseUserId.replace("ADMIN ", "").trim();
     }
 
-    // 2. RENDER KERANGKA SPASIAL DARI AppLayout.js (KESEPAKATAN KITA)
-    renderSidebar('app-sidebar', savedUserId, adminRoleDept);
-    renderHeader('app-header');
+    // 2. RENDER KERANGKA SPASIAL
+    initLayout(savedUserId, adminRoleDept);
     initThemeAndLogout();
 
-    // Sesuaikan Teks Header Khusus Halaman Ini
     const headerTitle = document.querySelector('#app-header h2');
     const headerSub = document.querySelector('#app-header p');
     if(headerTitle) headerTitle.innerText = "PLOTTING AREA";
-    if(headerSub) headerSub.innerText = "Pembagian Area & Koordinat Personil";
+    if(headerSub) headerSub.innerText = "Kordinator & PIC Area";
 
     if (isSuperAdmin) {
         const btnAdminUpload = document.getElementById('btnAdminUpload');
@@ -55,47 +50,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         closeToast: function() { document.getElementById('customToast').classList.add('translate-x-[120%]', 'opacity-0'); }
     };
 
-    // 4. TAB SYSTEM STATE
+    // 4. SYSTEM STATE
     let allDataCache = []; let masterOptions = {}; let dictLine = {}; let dictArea = {};
     const selectPlant = document.getElementById('selectPlant');
     const selectArea = document.getElementById('selectArea');
-    
-    let activeMode = 'MESIN';
-    const tabMesin = document.getElementById('tabMesin');
-    const tabRuangan = document.getElementById('tabRuangan');
-    const tabOutdoor = document.getElementById('tabOutdoor');
-    const viewMesin = document.getElementById('viewMesin');
-    const viewRuangan = document.getElementById('viewRuangan');
-    const viewOutdoor = document.getElementById('viewOutdoor');
 
-    function getDirectDriveLink(gdriveUrl) {
-        if (!gdriveUrl || gdriveUrl === "-" || gdriveUrl.includes("Upload_Error")) return null;
-        const match = gdriveUrl.match(/\/d\/([a-zA-Z0-9-_]+)/); 
-        if (match && match[1]) return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w2000`;
-        return null;
-    }
-
-    // 5. KANVAS GANDA (RUANGAN)
-    const btnTogAreaR = document.getElementById('btnTogAreaR');
-    const btnTogRuanganR = document.getElementById('btnTogRuanganR');
-    const imgAreaR = document.getElementById('imgAreaR');
-    const imgDetailR = document.getElementById('imgDetailR');
-
-    btnTogAreaR?.addEventListener('click', () => {
-        btnTogAreaR.classList.add('bg-cyan-500', 'text-white', 'shadow-[0_0_5px_rgba(14,165,233,0.4)]'); btnTogAreaR.classList.remove('text-slate-500');
-        btnTogRuanganR.classList.remove('bg-cyan-500', 'text-white', 'shadow-[0_0_5px_rgba(14,165,233,0.4)]'); btnTogRuanganR.classList.add('text-slate-500');
-        imgAreaR.classList.replace('opacity-0', 'opacity-100'); imgAreaR.classList.remove('pointer-events-none');
-        imgDetailR.classList.replace('opacity-100', 'opacity-0'); imgDetailR.classList.add('pointer-events-none');
-    });
-
-    btnTogRuanganR?.addEventListener('click', () => {
-        btnTogRuanganR.classList.add('bg-cyan-500', 'text-white', 'shadow-[0_0_5px_rgba(14,165,233,0.4)]'); btnTogRuanganR.classList.remove('text-slate-500');
-        btnTogAreaR.classList.remove('bg-cyan-500', 'text-white', 'shadow-[0_0_5px_rgba(14,165,233,0.4)]'); btnTogAreaR.classList.add('text-slate-500');
-        imgDetailR.classList.replace('opacity-0', 'opacity-100'); imgDetailR.classList.remove('pointer-events-none');
-        imgAreaR.classList.replace('opacity-100', 'opacity-0'); imgAreaR.classList.add('pointer-events-none');
-    });
-
-    // 6. ZOOM CONTROLS
+    // 5. ZOOM CONTROLS
     function applyZoom(sliderValue, imgElement) {
         if(!imgElement) return;
         const val = parseInt(sliderValue);
@@ -105,48 +65,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('zoomSliderLineM')?.addEventListener('input', (e) => applyZoom(e.target.value, document.getElementById('imgPlantM'), document.getElementById('zoomTextLineM')));
     document.getElementById('zoomSliderAreaM')?.addEventListener('input', (e) => applyZoom(e.target.value, document.getElementById('imgAreaM'), document.getElementById('zoomTextAreaM')));
-    document.getElementById('zoomSliderLineR')?.addEventListener('input', (e) => applyZoom(e.target.value, document.getElementById('imgPlantR'), document.getElementById('zoomTextLineR')));
-    document.getElementById('zoomSliderAreaR')?.addEventListener('input', (e) => { applyZoom(e.target.value, imgAreaR, document.getElementById('zoomTextAreaR')); applyZoom(e.target.value, imgDetailR, null); });
-    document.getElementById('zoomSliderOut')?.addEventListener('input', (e) => applyZoom(e.target.value, document.getElementById('imgPlantOut'), null));
 
-    // 7. ORCHESTRATOR ROUTING (DIRIGEN)
+    // 6. ORCHESTRATOR ROUTING
     function dispatchRender() {
         const plant = selectPlant.value.trim().toUpperCase();
         const area = selectArea.value.trim().toUpperCase();
-
-        if (activeMode === 'MESIN') {
-            renderMachineView(plant, area, allDataCache, dictLine, dictArea, getDirectDriveLink);
-        } else if (activeMode === 'RUANGAN') {
-            renderRoomView(plant, area, allDataCache, dictLine, dictArea, getDirectDriveLink);
-        } else if (activeMode === 'OUTDOOR') {
-            renderOutdoorView(plant, area, allDataCache, dictLine, dictArea, getDirectDriveLink);
-        }
+        // HANYA MENGGUNAKAN SATU RENDERER YAITU MESIN
+        renderMachineView(plant, area, allDataCache, dictLine, dictArea, getDirectDriveLink);
     }
 
-    function switchView(mode) {
-        activeMode = mode;
-        [tabMesin, tabRuangan, tabOutdoor].forEach(btn => {
-            if(btn) {
-                btn.classList.remove('bg-cyan-500', 'text-white', 'shadow-[0_0_10px_rgba(14,165,233,0.4)]', 'active');
-                btn.classList.add('text-slate-500');
-            }
-        });
-        if(viewMesin) viewMesin.classList.replace('flex', 'hidden'); 
-        if(viewRuangan) viewRuangan.classList.replace('flex', 'hidden'); 
-        if(viewOutdoor) viewOutdoor.classList.replace('flex', 'hidden');
-
-        if (mode === 'MESIN') { if(tabMesin) { tabMesin.classList.add('bg-cyan-500', 'text-white', 'shadow-[0_0_10px_rgba(14,165,233,0.4)]', 'active'); tabMesin.classList.remove('text-slate-500'); } if(viewMesin) viewMesin.classList.replace('hidden', 'flex'); } 
-        else if (mode === 'RUANGAN') { if(tabRuangan) { tabRuangan.classList.add('bg-cyan-500', 'text-white', 'shadow-[0_0_10px_rgba(14,165,233,0.4)]', 'active'); tabRuangan.classList.remove('text-slate-500'); } if(viewRuangan) viewRuangan.classList.replace('hidden', 'flex'); } 
-        else if (mode === 'OUTDOOR') { if(tabOutdoor) { tabOutdoor.classList.add('bg-cyan-500', 'text-white', 'shadow-[0_0_10px_rgba(14,165,233,0.4)]', 'active'); tabOutdoor.classList.remove('text-slate-500'); } if(viewOutdoor) viewOutdoor.classList.replace('hidden', 'flex'); }
-        
-        dispatchRender();
+    function getDirectDriveLink(gdriveUrl) {
+        if (!gdriveUrl || gdriveUrl === "-" || gdriveUrl.includes("Upload_Error")) return null;
+        const match = gdriveUrl.match(/\/d\/([a-zA-Z0-9-_]+)/); 
+        if (match && match[1]) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+        return null;
     }
 
-    tabMesin?.addEventListener('click', () => switchView('MESIN'));
-    tabRuangan?.addEventListener('click', () => switchView('RUANGAN'));
-    tabOutdoor?.addEventListener('click', () => switchView('OUTDOOR'));
-
-    // 8. EVENT LISTENERS DROPDOWN
+    // 7. EVENT LISTENERS DROPDOWN
     selectPlant?.addEventListener('change', () => {
         const selectedPlant = selectPlant.value.trim().toUpperCase();
         if (!selectedPlant) { selectArea.disabled = true; selectArea.innerHTML = '<option value="">-- Menunggu Line --</option>'; } 
@@ -161,14 +96,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     selectArea?.addEventListener('change', () => dispatchRender());
 
-    // 9. FETCH DATA INIT
+    // 8. FETCH DATA INIT
     async function initSystem() {
         const tContainerM = document.getElementById('tableContainerM');
         if(tContainerM) tContainerM.innerHTML = `<div class="p-8 flex flex-col items-center justify-center text-cyan-600 font-mono text-xs font-bold animate-pulse tracking-widest"><span class="w-8 h-8 border-t-2 border-cyan-500 rounded-full animate-spin mb-4 shadow-[0_0_10px_#0ea5e9]"></span>SINKRONISASI DATA...</div>`;
         
         try {
             const [resData, resMaster, resLayout] = await Promise.all([
-                fetch(APP_CONFIG.GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'READ' }) }).then(r => r.json()),
+                fetch(APP_CONFIG.GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'READ', payload: { userId: savedUserId } }) }).then(r => r.json()),
                 fetch(APP_CONFIG.GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'GET_MASTER' }) }).then(r => r.json()),
                 fetch(APP_CONFIG.GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'GET_LAYOUTS' }) }).then(r => r.json())
             ]);

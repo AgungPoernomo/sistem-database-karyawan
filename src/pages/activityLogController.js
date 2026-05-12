@@ -1,7 +1,7 @@
 // src/pages/activityLogController.js
 
 import { APP_CONFIG } from '../config/api.js';
-import { renderSidebar, renderHeader, initThemeAndLogout } from '../layouts/AppLayout.js';
+import { initLayout, initThemeAndLogout } from '../layouts/AppLayout.js';
 import { renderActivityTable } from '../components/activity/ActivityTable.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -20,15 +20,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // 2. RENDER KERANGKA SPASIAL
-    renderSidebar('app-sidebar', savedUserId, adminRoleDept);
-    renderHeader('app-header');
+    initLayout(savedUserId, adminRoleDept);
     initThemeAndLogout();
 
     const headerTitle = document.querySelector('#app-header h2');
     const headerSub = document.querySelector('#app-header p');
     const headerIndicator = document.querySelector('#app-header .bg-gradient-to-br');
     
-    if(headerTitle) headerTitle.innerText = "SYSTEM AUDIT LOG";
+    if(headerTitle) headerTitle.innerText = "SYSTEM Log Aktivitas";
     if(headerSub) {
         headerSub.innerText = "Jejak Aktivitas Otorisator";
         headerSub.classList.replace('text-cyan-600', 'text-indigo-600');

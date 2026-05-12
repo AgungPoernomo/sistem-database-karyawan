@@ -104,12 +104,12 @@ export function initEmployeeModals(containerId, dependencies) {
                     <div class="absolute inset-0 rounded-full bg-rose-500/20 animate-ping"></div>
                     <svg class="w-10 h-10 text-rose-500 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                 </div>
-                <h3 class="text-lg font-black text-slate-900 dark:text-white mb-2 uppercase tracking-widest font-mono">Cabut Otorisasi?</h3>
+                <h3 class="text-lg font-black text-slate-900 dark:text-white mb-2 uppercase tracking-widest font-mono">Hapus Data?</h3>
                 <p class="text-[10px] font-mono text-slate-600 dark:text-slate-400 mb-4 leading-relaxed font-bold">Personil <span id="deleteTargetId" class="text-rose-600 dark:text-rose-400 font-black tracking-wider block mt-1 mb-1 text-xs"></span>akan diisolasi ke sistem Data Recovery Vault.</p>
                 
                 <!-- INPUT ALASAN PENGHAPUSAN -->
                 <div class="mb-6 text-left">
-                    <label class="text-[9px] font-bold text-slate-500 dark:text-cyan-400/80 uppercase tracking-widest pl-2 font-mono">Alasan Pencabutan Akses</label>
+                    <label class="text-[9px] font-bold text-slate-500 dark:text-cyan-400/80 uppercase tracking-widest pl-2 font-mono">Alasan Penghapusan</label>
                     <textarea id="deleteReason" rows="2" class="w-full px-4 py-3 mt-1 rounded-xl font-mono text-xs font-bold glass-input resize-none" placeholder="Masukkan alasan..." required></textarea>
                 </div>
 
@@ -154,7 +154,7 @@ export function initEmployeeModals(containerId, dependencies) {
     window.dataKaryawanApp.openModal = function(mode, data = null) {
         document.getElementById('formMode').value = mode;
         document.getElementById('formRowNo').value = (mode === 'UPDATE' && data) ? data[0] : '';
-        document.getElementById('modalTitle').innerHTML = mode === 'CREATE' ? `<span class="w-2 h-6 bg-cyan-500 rounded-full mr-3 shadow-[0_0_10px_#0ea5e9]"></span> Tambah Data Karyawan` : `<span class="w-2 h-6 bg-amber-500 rounded-full mr-3 shadow-[0_0_10px_#f59e0b]"></span> Modifikasi Node Personil`;
+        document.getElementById('modalTitle').innerHTML = mode === 'CREATE' ? `<span class="w-2 h-6 bg-cyan-500 rounded-full mr-3 shadow-[0_0_10px_#0ea5e9]"></span> Tambah Data Karyawan` : `<span class="w-2 h-6 bg-amber-500 rounded-full mr-3 shadow-[0_0_10px_#f59e0b]"></span> Pembaruan Data Personil`;
         
         const previewFoto = document.getElementById('previewFoto');
         const previewInitials = document.getElementById('previewInitials');

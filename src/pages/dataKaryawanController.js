@@ -1,7 +1,7 @@
 // src/pages/dataKaryawanController.js
 
 import { APP_CONFIG } from '../config/api.js';
-import { renderSidebar, renderHeader, initThemeAndLogout } from '../layouts/AppLayout.js';
+import { initLayout, initThemeAndLogout } from '../layouts/AppLayout.js';
 import { initEmployeeModals } from '../components/dataKaryawan/EmployeeModal.js';
 import { renderDataTable } from '../components/dataKaryawan/DataTable.js';
 import { EmployeeService } from '../services/employeeService.js';
@@ -21,14 +21,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // 2. RENDER KERANGKA SPASIAL UTAMA
-    renderSidebar('app-sidebar', savedUserId, adminRoleDept);
-    renderHeader('app-header');
+    initLayout(savedUserId, adminRoleDept);
     initThemeAndLogout();
 
     const headerTitle = document.querySelector('#app-header h2');
     const headerSub = document.querySelector('#app-header p');
-    if(headerTitle) headerTitle.innerText = "DATABASE KARYAWAN SATORIA ANEKA INDUSTRI";
-    if(headerSub) headerSub.innerText = "Manajemen & Tata Kelola Identitas Node";
+    if(headerTitle) headerTitle.innerText = "DATABASE KARYAWAN";
+    if(headerSub) headerSub.innerText = "Manajemen & Tata Kelola Data Karyawan";
 
     // 3. FITUR TOAST WEB3
     window.dataKaryawanApp = {

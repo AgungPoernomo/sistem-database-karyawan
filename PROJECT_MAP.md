@@ -15,9 +15,6 @@ SISTEM-DATABASE-KARYAWAN/
 │   └── icons.svg
 ├── src // Folder utama source code aplikasi
 │   ├── assets // Aset statis seperti gambar, ikon, dan font
-│   │   ├── hero.png
-│   │   ├── javascript.svg
-│   │   └── vite.svg
 │   ├── components
 │   │   ├── activity
 │   │   │   └── ActivityTable.js
@@ -69,4 +66,4 @@ SISTEM-DATABASE-KARYAWAN/
 
 ```
 
-*Terakhir diperbarui pada: 3/5/2026, 17.12.16 WIB*
+*Terakhir diperbarui pada: 12/5/2026, 12.45.25 WIB*

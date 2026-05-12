@@ -69,10 +69,10 @@ export function renderDataTable(containerId, data) {
                     <span class="inline-flex items-center px-2 py-1 rounded border border-emerald-300/50 dark:border-emerald-500/30 bg-emerald-50/80 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] font-black tracking-widest shadow-sm">AKTIF</span>
                 </td>
                 <td class="p-4 text-right pr-8">
-                    <button class="btn-edit text-slate-400 hover:text-cyan-600 hover:bg-white dark:hover:bg-cyan-900/30 p-2 rounded-xl transition-all mx-0.5 shadow-sm" data-row="${rowNo}" title="Edit Node">
+                    <button class="btn-edit text-slate-400 hover:text-cyan-600 hover:bg-white dark:hover:bg-cyan-900/30 p-2 rounded-xl transition-all mx-0.5 shadow-sm" data-row="${rowNo}" title="Edit Data">
                         <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                     </button>
-                    <button class="btn-delete text-slate-400 hover:text-rose-500 hover:bg-white dark:hover:bg-rose-900/30 p-2 rounded-xl transition-all mx-0.5 shadow-sm" data-row="${rowNo}" data-nama="${nama}" title="Cabut Akses">
+                    <button class="btn-delete text-slate-400 hover:text-rose-500 hover:bg-white dark:hover:bg-rose-900/30 p-2 rounded-xl transition-all mx-0.5 shadow-sm" data-row="${rowNo}" data-nama="${nama}" title="Hapus Data">
                         <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                     </button>
                 </td>

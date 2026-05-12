@@ -39,7 +39,7 @@
         /* --- SPATIAL ISLAND (Amber Edition) --- */
         .spatial-island {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.4) 100%);
-            backdrop-filter: blur(30px) saturate(200%); -webkit-backdrop-filter: blur(30px) saturate(200%);
+            backdrop-filter: blur(10px) saturate(200%); -webkit-backdrop-filter: blur(10px) saturate(200%);
             border-top: 1.5px solid rgba(255, 255, 255, 1); border-left: 1.5px solid rgba(255, 255, 255, 0.9); 
             border-right: 1px solid rgba(255, 255, 255, 0.3); border-bottom: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.15), inset 0 0 25px rgba(255, 255, 255, 1);
@@ -50,6 +50,38 @@
             border-right: 1px solid rgba(255, 255, 255, 0.05); border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), inset 0 2px 20px rgba(245, 158, 11, 0.15);
         }
+        /* --- SPATIAL CANVAS & DOT MATRIX --- */
+        .dot-matrix { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0.4; background-image: radial-gradient(rgba(14, 165, 233, 0.3) 1px, transparent 1px); background-size: 16px 16px; mask-image: linear-gradient(to bottom, black 10%, transparent 90%); -webkit-mask-image: linear-gradient(to bottom, black 10%, transparent 90%); }
+        .dark .dot-matrix { background-image: radial-gradient(rgba(56, 189, 248, 0.2) 1px, transparent 1px); }
+
+        /* --- HOLOGRAPHIC NAVIGATION --- */
+        .holo-nav { position: relative; z-index: 10; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); border-radius: 1rem; overflow: hidden; }
+        .holo-bracket { opacity: 0; transform: translateX(-10px); color: #0ea5e9; transition: all 0.3s ease; font-weight: 900; }
+        .holo-bracket.right { transform: translateX(10px); }
+        .holo-nav:hover .holo-bracket { opacity: 1; transform: translateX(0); }
+        .holo-nav.active .holo-bracket { opacity: 1; transform: translateX(0); color: #0284c7; text-shadow: 0 0 8px rgba(14,165,233,0.5); }
+        .dark .holo-nav.active .holo-bracket { color: #38bdf8; }
+        .holo-nav::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(14, 165, 233, 0.1), transparent); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; z-index: -1; }
+        .holo-nav:hover::before { transform: scaleX(1); }
+        .holo-nav.active { background: rgba(255, 255, 255, 0.6); box-shadow: inset 2px 0 0 #0ea5e9, 0 10px 20px rgba(14, 165, 233, 0.05); }
+        .dark .holo-nav.active { background: rgba(14, 165, 233, 0.1); box-shadow: inset 2px 0 0 #38bdf8, 0 10px 20px rgba(0, 0, 0, 0.2); }
+        .holo-text { color: #64748b; transition: all 0.3s ease; }
+        .dark .holo-text { color: #94a3b8; }
+        .holo-nav:hover .holo-text { color: #0284c7; transform: translateX(4px); }
+        .holo-nav.active .holo-text { color: #0f172a; transform: translateX(4px); font-weight: 800; }
+        .dark .holo-nav:hover .holo-text { color: #38bdf8; }
+        .dark .holo-nav.active .holo-text { color: #ffffff; text-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
+        .holo-icon { color: #94a3b8; transition: all 0.4s ease; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.05)); }
+        .dark .holo-icon { color: #475569; }
+        .holo-nav:hover .holo-icon { color: #0ea5e9; transform: scale(1.1) rotate(-5deg); filter: drop-shadow(0 0 5px rgba(14,165,233,0.4)); }
+        .holo-nav.active .holo-icon { color: #0284c7; transform: scale(1.1); filter: drop-shadow(0 0 8px rgba(14,165,233,0.5)); }
+        .dark .holo-nav.active .holo-icon { color: #38bdf8; }
+
+        /* --- HARDWARE NODE (User Card) --- */
+        .hardware-node { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(255, 255, 255, 1); border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(14, 165, 233, 0.1), inset 0 -2px 10px rgba(14, 165, 233, 0.05); position: relative; overflow: hidden; z-index: 20; }
+        .dark .hardware-node { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(56, 189, 248, 0.2); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 -2px 10px rgba(14, 165, 233, 0.1); }
+        .hardware-node::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #0ea5e9, transparent); animation: scanNode 4s infinite; opacity: 0.5; }
+        @keyframes scanNode { 0% { top: -10%; } 100% { top: 110%; } }
 
         .no-transitions * { transition: none !important; animation: none !important; }
     </style>
@@ -61,8 +93,8 @@
         })();
     </script>
 </head>
-<body id="app-body" class="opacity-0 transition-opacity duration-700 ease-out bg-[#e1e4e7] text-slate-800 dark:bg-slate-950 dark:text-slate-300 h-screen flex overflow-hidden antialiased relative selection:bg-amber-500 selection:text-white">
-    
+<!-- Hapus transisi opacity-0 di body agar tidak berkedip -->
+<body id="app-body" class="bg-[#e1e4e7] text-slate-800 dark:bg-slate-950 dark:text-slate-300 h-screen flex overflow-hidden antialiased relative selection:bg-amber-500 selection:text-white">    
     <div class="spatial-grid"></div>
 
     <div id="customToast" class="fixed top-5 right-5 z-[100] transform transition-all duration-400 translate-x-[120%] opacity-0 flex items-center p-4 mb-4 text-slate-800 bg-white/90 dark:text-white dark:bg-slate-900/90 backdrop-blur-md rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-slate-200 dark:border-slate-700/50" role="alert">
@@ -73,14 +105,123 @@
         </button>
     </div>
 
-    <div id="app-sidebar" class="z-30 h-full flex-shrink-0 w-[316px] hidden lg:block"></div>
+    <!-- ================= MULAI SIDEBAR STATIS ================= -->
+    <aside id="app-sidebar" class="fixed inset-y-0 left-0 z-40 w-[280px] lg:w-auto lg:static transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex-shrink-0">
+        <button id="closeMobileMenuBtn" class="lg:hidden absolute top-6 -right-12 z-50 bg-white/50 dark:bg-slate-900/50 p-2 rounded-xl border border-white/50 dark:border-slate-700/50 text-slate-700 dark:text-white backdrop-blur-md hidden transition-opacity">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
 
-    <main class="relative z-10 flex-1 flex flex-col h-full overflow-hidden">
+        <div class="w-full lg:w-[280px] m-0 lg:m-6 lg:mr-3 h-full lg:h-[calc(100vh-3rem)] spatial-island lg:rounded-[2.5rem] flex flex-col transition-theme relative z-30 shadow-[5px_0_20px_rgba(0,0,0,0.1)] lg:shadow-none">
+            <div class="dot-matrix"></div>
+            <div class="h-32 flex flex-col items-center justify-center px-6 relative z-10 mt-6 lg:mt-2">
+                <div class="bg-white/60 dark:bg-slate-900/60 backdrop-blur-md px-6 py-3 rounded-[1.25rem] border border-white dark:border-cyan-500/30 shadow-[0_10px_25px_rgba(14,165,233,0.1)] transition-transform duration-500 hover:scale-105 group cursor-default relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-cyan-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <img src="/public/assets/logo-satoria.png" alt="Logo" class="h-9 w-auto object-contain filter drop-shadow-[0_2px_8px_rgba(14,165,233,0.3)] dark:drop-shadow-[0_2px_15px_rgba(14,165,233,0.6)] relative z-10" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%230ea5e9%22/></svg>'">
+                </div>
+                <div class="mt-5 flex items-center space-x-2">
+                    <span class="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-ping"></span>
+                    <span class="text-[9px] font-mono text-cyan-600 dark:text-cyan-400 tracking-[0.3em] uppercase font-black">Manajemen Data Karyawan</span>
+                </div>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto py-6 px-5 space-y-1.5 font-mono text-[11px] font-bold tracking-widest relative z-10 custom-scrollbar">
+                <a href="/pages/dashboard.html" class="holo-nav flex items-center px-3 py-4 group">
+                    <span class="holo-bracket left mr-2">[</span>
+                    <svg class="w-5 h-5 mr-3 holo-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    <span class="holo-text uppercase flex-1">Dashboard</span>
+                    <span class="holo-bracket right ml-2">]</span>
+                </a>
+                
+                <a href="/pages/data-karyawan.html" class="holo-nav flex items-center px-3 py-4 group">
+                    <span class="holo-bracket left mr-2">[</span>
+                    <svg class="w-5 h-5 mr-3 holo-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path></svg>
+                    <span id="navDbText" class="holo-text truncate uppercase flex-1">Database Master</span>
+                    <span class="holo-bracket right ml-2">]</span>
+                </a>
+                
+                <a href="/pages/plotting-area.html" class="holo-nav flex items-center px-3 py-4 group">
+                    <span class="holo-bracket left mr-2">[</span>
+                    <svg class="w-5 h-5 mr-3 holo-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                    <span class="holo-text uppercase flex-1">Plotting Area</span>
+                    <span class="holo-bracket right ml-2">]</span>
+                </a>
+                
+                <!-- DI SINI KITA MEMINDAHKAN CLASS 'active' -->
+                <a href="/pages/recovery.html" class="holo-nav active flex items-center px-3 py-4 group">
+                    <span class="holo-bracket left mr-2 text-amber-500">[</span>
+                    <svg class="w-5 h-5 mr-3 holo-icon group-hover:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16M10 11v6m4-6v6"></path></svg>
+                    <span class="holo-text uppercase flex-1 group-hover:text-amber-600 dark:group-hover:text-amber-400">Sistem Recovery</span>
+                    <span class="holo-bracket right ml-2 text-amber-500">]</span>
+                </a>
+                
+                <a href="/pages/activity-log.html" class="holo-nav flex items-center px-3 py-4 group">
+                    <span class="holo-bracket left mr-2">[</span>
+                    <svg class="w-5 h-5 mr-3 holo-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span class="holo-text uppercase flex-1">Log Aktivitas</span>
+                    <span class="holo-bracket right ml-2">]</span>
+                </a>
+
+                <div class="h-8"></div>
+                <button id="themeToggleBtn" class="w-full holo-nav flex items-center px-3 py-4 group outline-none">
+                    <span class="holo-bracket left mr-2 text-indigo-500 dark:text-amber-400">[</span>
+                    <svg id="themeIcon" class="w-5 h-5 mr-3 holo-icon group-hover:text-indigo-500 dark:group-hover:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+                    <span id="themeText" class="holo-text uppercase flex-1 group-hover:text-indigo-600 dark:group-hover:text-amber-300 text-left">Tema Interface</span>
+                    <span class="holo-bracket right ml-2 text-indigo-500 dark:text-amber-400">]</span>
+                </button>
+            </nav>
+
+            <div class="p-5 relative z-10 mt-auto">
+                <div class="hardware-node p-4 flex items-center group cursor-default">
+                    <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-900 border border-cyan-200 dark:border-cyan-500/50 flex items-center justify-center text-cyan-600 dark:text-cyan-400 font-black text-xl mr-4 shadow-[0_5px_15px_rgba(14,165,233,0.15)] relative overflow-hidden transition-colors flex-shrink-0">
+                        <div class="absolute inset-0 bg-cyan-400/20 animate-pulse"></div>
+                        <span id="userAvatar" class="relative z-10">?</span>
+                    </div>
+                    <div class="flex-1 overflow-hidden font-mono">
+                        <p id="userNameDisplay" class="text-[13px] font-extrabold text-slate-800 dark:text-white truncate tracking-widest transition-colors">USER</p>
+                        <div class="flex items-center mt-1.5 space-x-2">
+                            <span id="userRoleBadge" class="px-2 py-0.5 bg-cyan-500/10 border border-cyan-500/20 text-cyan-600 dark:text-cyan-400 text-[8px] font-black tracking-widest rounded-md uppercase">ROLE</span>
+                        </div>
+                    </div>
+                    <button id="logoutBtnSide" class="p-3 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/20 rounded-[10px] transition-all border border-transparent hover:border-rose-200 dark:hover:border-rose-500/30 flex-shrink-0" title="Putuskan Koneksi Node">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <!-- ================= AKHIR SIDEBAR STATIS ================= -->
+
+    <main class="relative z-30 flex-1 flex flex-col h-full overflow-hidden">
         
-        <div id="app-header"></div>
+        <!-- ================= MULAI HEADER STATIS ================= -->
+        <header id="app-header" class="mx-4 lg:mx-6 mt-4 lg:mt-6 mb-2 spatial-island rounded-[1.5rem] lg:rounded-[2rem] h-20 lg:h-24 flex-shrink-0 flex items-center justify-between px-5 lg:px-10 z-30 relative transition-theme">
+            <div class="flex items-center space-x-3 md:space-x-4">
+                <button onclick="window.toggleMobileMenu()" class="lg:hidden flex items-center justify-center p-2.5 rounded-xl bg-white/40 dark:bg-slate-900/40 border border-white/50 dark:border-slate-700/50 text-slate-700 dark:text-cyan-400 shadow-sm backdrop-blur-md transition-colors hover:bg-white/60 dark:hover:bg-slate-800">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+                <div class="hidden lg:flex relative w-12 h-12 mr-6 items-center justify-center">
+                    <div class="absolute inset-0 bg-cyan-400 rounded-full blur-[10px] opacity-50 animate-pulse"></div>
+                    <div class="relative w-6 h-6 bg-gradient-to-br from-white to-cyan-200 dark:from-cyan-400 dark:to-blue-600 rounded-full border-2 border-white dark:border-cyan-200 shadow-[0_0_15px_rgba(14,165,233,0.8)]"></div>
+                </div>
+                <div>
+                    <h2 class="text-sm md:text-[1.35rem] font-black text-slate-800 dark:text-white md:tracking-[0.15em] tracking-widest uppercase transition-colors font-mono drop-shadow-sm">Command Center</h2>
+                    <p class="text-[8px] md:text-[10px] font-bold font-mono text-cyan-600 dark:text-cyan-400 mt-1 uppercase md:tracking-[0.25em] tracking-wider transition-colors truncate max-w-[150px] md:max-w-none">Tata Kelola Data</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3 text-[10px] font-mono font-bold text-cyan-700 dark:text-cyan-300 uppercase tracking-widest bg-white/50 dark:bg-slate-900/50 px-4 md:px-6 py-2 md:py-3 rounded-2xl border border-white dark:border-cyan-500/30 shadow-sm dark:shadow-[inset_0_0_15px_rgba(14,165,233,0.1)] transition-colors backdrop-blur-md">
+                <div class="flex space-x-1 md:mr-2">
+                    <span class="w-1.5 h-1.5 bg-cyan-500 dark:bg-cyan-400 rounded-full animate-bounce"></span>
+                    <span class="w-1.5 h-1.5 bg-cyan-500 dark:bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 100ms"></span>
+                </div>
+                <span class="hidden md:inline">Enkripsi: AES-256 Valid</span>
+                <span class="md:hidden">SECURE</span>
+            </div>
+        </header>
+        <!-- ================= AKHIR HEADER STATIS ================= -->
 
         <div class="flex-1 overflow-hidden px-3 md:px-6 pb-4 md:pb-6 pt-0 flex flex-col">
-            <div class="spatial-island rounded-3xl md:rounded-[2.5rem] flex flex-col flex-1 overflow-hidden relative z-10 border-t-2 border-t-white/80 dark:border-t-amber-500/30">
+            <div class="spatial-island rounded-3xl md:rounded-[2.5rem] flex flex-col flex-1 overflow-hidden relative z-20 border-t-2 border-t-white/80 dark:border-t-amber-500/30">
                 
                 <div class="px-4 md:px-8 py-4 md:py-5 border-b border-white/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 flex justify-between items-center backdrop-blur-md z-10 shadow-sm">
                     <h3 class="text-sm font-bold text-slate-800 dark:text-white uppercase tracking-widest flex items-center font-mono">
@@ -99,16 +240,9 @@
         </div>
     </main>
 
-    <div id="app-modal"></div>
+    <!-- POSISI APP MODAL HARUS DI SINI AGAR BISA MENUTUPI SELURUH HALAMAN -->
+    <div id="app-modal" class="relative z-[9999]"></div>
 
     <script type="module" src="/src/pages/recoveryController.js"></script>
-    <script>
-        // Membuka 'tirai' layar secara mulus setelah JS dan CSS selesai merakit UI
-        window.addEventListener('load', () => {
-            setTimeout(() => { 
-                document.getElementById('app-body').classList.remove('opacity-0'); 
-            }, 150); 
-        });
-    </script>
 </body>
 </html>

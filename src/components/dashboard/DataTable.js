@@ -3,8 +3,8 @@
 function getAvatarLink(gdriveUrl) {
     if (!gdriveUrl || gdriveUrl === "-" || gdriveUrl.includes("Upload_Error")) return null;
     const match = gdriveUrl.match(/\/d\/([a-zA-Z0-9-_]+)/); 
-    // Menggunakan endpoint 'uc' untuk akses view gambar langsung secara native
-    if (match && match[1]) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+    // Menggunakan cara yang SAMA PERSIS dengan halaman Database Karyawan
+    if (match && match[1]) return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w400`;
     return null;
 }
 
@@ -63,20 +63,17 @@ export function renderDataTable(containerId, data) {
                             d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
         }
 
-        let urlDrive = row[9] ? String(row[9]) : ""; 
-        let directFotoLink = getAvatarLink(urlDrive);
-        
-        // Render gambar langsung. Jika kosong dari database, gunakan ikon profil default bawaan
-        let fotoElement = directFotoLink 
-            ? `<img src="${directFotoLink}" alt="Foto" class="w-full h-full object-cover">`
-            : `<div class="w-full h-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center"><svg class="w-5 h-5 text-slate-400 dark:text-slate-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>`;
+        // --- PENYESUAIAN LOGIKA FOTO ---
+        // Menggunakan row[9] karena link foto berada di index ke-9 pada data master (CURRENT_STATE)
+        let directFotoLink = getAvatarLink(row[9] ? String(row[9]) : "");
+        let FotoSrc = directFotoLink ? directFotoLink : `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23f1f5f9'/><text x='50' y='50' font-family='monospace' font-size='45' font-weight='bold' fill='%2394a3b8' text-anchor='middle' dominant-baseline='central'>${nama !== '-' ? nama.charAt(0).toUpperCase() : '?'}</text></svg>`;
 
         tableHTML += `
             <tr class="hover:bg-white/60 dark:hover:bg-cyan-900/10 transition-colors cursor-default group">
                 <td class="p-4 pl-8 text-slate-400 font-bold">${no}</td>
                 <td class="p-4 flex justify-center">
                     <div class="w-10 h-10 rounded-xl overflow-hidden border border-white dark:border-slate-700 shadow-sm bg-slate-100 dark:bg-transparent">
-                        ${fotoElement}
+                        <img src="${FotoSrc}" alt="Foto" class="w-full h-full object-cover">
                     </div>
                 </td>
                 <td class="p-4 font-black text-slate-900 dark:text-cyan-400">${idKaryawan}</td>

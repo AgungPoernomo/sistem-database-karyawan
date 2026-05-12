@@ -37,7 +37,6 @@ export function initModalEngine(containerId, rawEmployeeData) {
             let filteredData = rawEmployeeData;
             if(lineName !== 'SEMUA LINE') {
                 filteredData = rawEmployeeData.filter(row => {
-                    // BUG FIXED: Plant/Line ada di row[4]
                     const loc = String(row[4]||'').toUpperCase();
                     return loc.includes(lineName.toUpperCase());
                 });
@@ -71,7 +70,7 @@ export function initModalEngine(containerId, rawEmployeeData) {
                         </div>
                         <div class="w-full">
                             <div class="flex justify-between text-[10px] font-bold font-mono mb-2 text-white uppercase tracking-widest">
-                                <span class="text-emerald-300">Node Aktif (${status.Aktif})</span>
+                                <span class="text-emerald-300">Karyawan Aktif (${status.Aktif})</span>
                             </div>
                             <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden shadow-inner">
                                 <div class="h-full bg-emerald-500 bar-animate shadow-[0_0_8px_#10b981]" style="width: ${(status.Aktif/tTotal)*100}%"></div>
@@ -124,7 +123,7 @@ export function initModalEngine(containerId, rawEmployeeData) {
                 let groups = { A:0, B:0, C:0, D:0 };
 
                 filtered.forEach(row => {
-                    const loc = String(row[4]||'').toUpperCase(); // Fixed logic here as well
+                    const loc = String(row[4]||'').toUpperCase();
                     if(loc.includes('LINE 1')) lines["LINE 1"]++;
                     else if(loc.includes('LINE 2')) lines["LINE 2"]++;
                     else if(loc.includes('LINE 3')) lines["LINE 3"]++;
@@ -175,7 +174,7 @@ export function initModalEngine(containerId, rawEmployeeData) {
                 `;
             };
 
-            modalTitle.innerText = "Topologi Area Spasial";
+            modalTitle.innerText = "SEBARAN DATA KARYAWAN (ALL PLANT)";
             modalBody.innerHTML = `
                 <div class="w-full p-8 grid grid-cols-12 gap-6 h-[70vh] bg-white/40 dark:bg-slate-950/40">
                     <div class="col-span-3 border-r border-white/50 dark:border-slate-800 pr-4 overflow-y-auto custom-scrollbar space-y-1.5">
@@ -207,7 +206,7 @@ export function initModalEngine(containerId, rawEmployeeData) {
                 let lines = { "L1":0, "L2":0, "L3":0, "L4":0 };
                 let genders = { L:0, P:0 };
                 gData.forEach(r => {
-                    const loc = String(r[4]||'').toUpperCase(); // Fixed logic here
+                    const loc = String(r[4]||'').toUpperCase();
                     if(loc.includes('LINE 1')) lines["L1"]++;
                     else if(loc.includes('LINE 2')) lines["L2"]++;
                     else if(loc.includes('LINE 3')) lines["L3"]++;
@@ -245,47 +244,6 @@ export function initModalEngine(containerId, rawEmployeeData) {
             modalBody.innerHTML = `
                 <div class="w-full p-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 bg-white/40 dark:bg-transparent">
                     ${['A','B','C','D'].map(g => buildRealGroupCard(g, groupsData[g])).join('')}
-                </div>
-            `;
-            masterModal.classList.remove('hidden');
-            setTimeout(() => { masterModal.classList.remove('opacity-0'); modalContent.classList.remove('scale-95'); }, 10);
-        },
-
-        openStatusModal: function() {
-            let active = 0, inactive = 0;
-            rawEmployeeData.forEach(row => {
-                const stat = String(row[11] || '').toUpperCase();
-                if(stat.includes('TIDAK') || stat.includes('INAKTIF') || stat.includes('NON')) inactive++;
-                else active++;
-            });
-            const total = rawEmployeeData.length || 1;
-            const pctActive = ((active/total)*100).toFixed(1);
-            
-            modalTitle.innerText = "Status Telemetri Kesehatan Sistem";
-            modalBody.innerHTML = `
-                <div class="w-full p-10 flex flex-col md:flex-row items-center justify-center gap-16 bg-white/40 dark:bg-transparent">
-                    <div class="relative w-72 h-72">
-                        <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">
-                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="2" class="text-rose-500/20" />
-                            <path stroke-dasharray="${(active/total)*100}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3" class="text-emerald-500 bar-animate shadow-[0_0_10px_#10b981]" />
-                        </svg>
-                        <div class="absolute inset-0 flex flex-col items-center justify-center">
-                            <span class="text-[3.5rem] font-black text-slate-800 dark:text-white font-mono drop-shadow-md">${pctActive}%</span>
-                            <span class="text-[9px] text-slate-500 font-bold tracking-[0.3em] uppercase mt-2 font-mono">Health Rate</span>
-                        </div>
-                    </div>
-                    <div class="flex flex-col gap-6 w-full max-w-sm">
-                        <div class="bg-white/60 dark:bg-slate-900/80 border border-white dark:border-slate-700/50 p-6 rounded-[2rem] flex flex-col relative overflow-hidden shadow-sm">
-                            <div class="absolute left-0 top-0 bottom-0 w-2.5 bg-emerald-500 shadow-[0_0_10px_#10b981]"></div>
-                            <p class="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest text-[10px] mb-2 pl-4 font-mono">Node Bekerja (Aktif)</p>
-                            <p class="text-5xl font-black text-slate-800 dark:text-white font-mono pl-4">${active}</p>
-                        </div>
-                        <div class="bg-white/60 dark:bg-slate-900/80 border border-white dark:border-slate-700/50 p-6 rounded-[2rem] flex flex-col relative overflow-hidden shadow-sm">
-                            <div class="absolute left-0 top-0 bottom-0 w-2.5 bg-rose-500 shadow-[0_0_10px_#f43f5e]"></div>
-                            <p class="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest text-[10px] mb-2 pl-4 font-mono">Cuti / Non-Aktif</p>
-                            <p class="text-5xl font-black text-slate-800 dark:text-white font-mono pl-4">${inactive}</p>
-                        </div>
-                    </div>
                 </div>
             `;
             masterModal.classList.remove('hidden');

@@ -1,6 +1,6 @@
 // src/pages/dashboardController.js
 
-import { renderSidebar, renderHeader, initThemeAndLogout } from '../layouts/AppLayout.js';
+import { initLayout, initThemeAndLogout } from '../layouts/AppLayout.js';
 import { renderTopModules } from '../components/dashboard/TopModules.js';
 import { renderStatsCards } from '../components/dashboard/StatsCards.js';
 import { renderDataTable } from '../components/dashboard/DataTable.js';
@@ -27,8 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // 2. RENDER KERANGKA SPASIAL
-    renderSidebar('app-sidebar', savedUserId, adminRoleDept);
-    renderHeader('app-header');
+    initLayout(savedUserId, adminRoleDept);
     initThemeAndLogout();
 
     // 3. INIT ENGINE MODAL & PEMUATAN DATA
